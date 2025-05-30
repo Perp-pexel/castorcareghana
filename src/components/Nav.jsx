@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import logo2 from '../assets/logo2.png';
 import '../App.css';
+import { Link } from 'react-router-dom';
 
 const Nav = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -57,15 +58,15 @@ const Nav = () => {
                   display: 'flex',listStyle: 'none',margin: 0,padding: 0,gap: '20px',alignItems: 'center',fontSize: '15px',fontWeight: 'bold', color: '#333'
                 }}
               >
-                <li><a href="/" className="navlink">Home</a></li>
-                <li><a href="/about" className="navlink">About</a></li>
-                <li><a href="/product" className="navlink">Products</a></li>
-                <li><a href="/service" className="navlink">Services</a></li>
-                <li><a href="/blog" className="navlink">Blog</a></li>
-                {/* Contact Button (Desktop) */}
-                <li><a href="/contact" className='navlink' style={{
-                  padding: '8px 16px',backgroundColor: '#28a745',color: '#fff',border: 'none',borderRadius: '20px',fontWeight: 'bold',textDecoration: 'none',display: 'flex',alignItems: 'center',gap: '5px',cursor: 'pointer'
-                }}>Contact <span>→</span></a></li>
+              <Link to="/" className="navlink">HOME</Link>
+              <Link to="/about" className="navlink">About</Link>
+              <Link to="/product" className="navlink">Products</Link>
+              <Link to="/service" className="navlink">Services</Link>
+              <Link to="/blog" className="navlink">Blog</Link>
+              {/* Contact Button (Desktop) */}
+              <Link to="/contact" className='navlink' style={{
+                padding: '8px 16px',backgroundColor: '#28a745',color: '#fff',border: 'none',borderRadius: '20px',fontWeight: 'bold',textDecoration: 'none',display: 'flex',alignItems: 'center',gap: '5px',cursor: 'pointer'
+              }}>Contact <span>→</span></Link>
               </ul>
             </nav>
           </div>
@@ -84,15 +85,17 @@ const Nav = () => {
               listStyle: 'none',padding: 0,margin: 0,display: 'flex',flexDirection: 'column',gap: '10px',fontSize: '15px',fontWeight: 'bold', color: '#333',
             }}
           >
-            <li><a href="/" className="navlink" style={{ textDecoration: 'none', color: '#333' }} onClick={handleLinkClick}>Home</a></li>
-            <li><a href="/about" className="navlink" style={{ textDecoration: 'none', color: '#333' }} onClick={handleLinkClick}>About</a></li>
-            <li><a href="/product" className="navlink" style={{ textDecoration: 'none', color: '#333' }} onClick={handleLinkClick}>Products</a></li>
-            <li><a href="/service" className="navlink" style={{ textDecoration: 'none', color: '#333' }} onClick={handleLinkClick}>Services</a></li>
-            <li><a href="/blog" className="navlink" style={{ textDecoration: 'none', color: '#333' }} onClick={handleLinkClick}>Blog</a></li>
+            <Link to="/" className="text-gray-700 hover:text-[#019A28] hover:underline transition-colors font-medium">
+                HOME
+              </Link>
+            <Link to="/about" className="navlink" style={{ textDecoration: 'none', color: '#333' }} onClick={handleLinkClick}>About</Link>
+            <Link to="/product" className="navlink" style={{ textDecoration: 'none', color: '#333' }} onClick={handleLinkClick}>Products</Link>
+            <Link to="/service" className="navlink" style={{ textDecoration: 'none', color: '#333' }} onClick={handleLinkClick}>Services</Link>
+            <Link to="/blog" className="navlink" style={{ textDecoration: 'none', color: '#333' }} onClick={handleLinkClick}>Blog</Link>
             <li>
-              <a href="/contact" className="navlink" onClick={handleLinkClick} style={{ padding: '8px 16px',backgroundColor: '#28a745',color: '#fff',border: 'none',borderRadius: '20px',fontWeight: 'bold',textDecoration: 'none',display: 'flex',alignItems: 'center',gap: '5px',cursor: 'pointer', justifyContent: 'center' }}>
+              <Link to="/contact" className="navlink" onClick={handleLinkClick} style={{ padding: '8px 16px',backgroundColor: '#28a745',color: '#fff',border: 'none',borderRadius: '20px',fontWeight: 'bold',textDecoration: 'none',display: 'flex',alignItems: 'center',gap: '5px',cursor: 'pointer', justifyContent: 'center' }}>
                 Contact <span>→</span>
-              </a>
+              </Link>
             </li>
           </ul>
         </div>
