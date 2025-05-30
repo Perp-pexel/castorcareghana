@@ -1,0 +1,167 @@
+
+.hero-container::before{
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.219), rgba(0, 0, 0, 0.219));
+    z-index: 1;
+}
+.navlink {
+  text-decoration: none;
+  color: inherit;
+  padding: 0.5em 1em;
+  border-radius: 4px;
+  transition: background 0.3s;
+}
+
+.navlink:hover {
+  background: forestgreen;
+  color: white;
+}
+
+.navlink.active {
+  background: #4caf50;
+  color: white;
+}
+.navlink.active:hover {
+  background: #45a049;
+}
+.navlink:focus {
+  outline: 2px solid #4caf50;
+  outline-offset: 2px;
+}
+
+
+/* footer */
+.link-style {
+  color: #fff;
+  text-decoration: none;
+  margin-bottom: 8px;
+  display: block;
+  font-size: 17px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.link-style:hover {
+  color: #90ee90;
+}
+
+
+.social-icon {
+  font-size: 20px;
+  color: #90ee90;
+}
+
+/* Content */
+ 
+    .section-style {
+      width: 80%;
+      height: 50%;
+      margin: 2rem auto;
+      padding: 2rem;
+      background-color: #f9f9f9;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+  .flex-container {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .text-style {
+    flex: 1;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #333;
+    max-width: 50%;
+  }
+
+  .img-style{
+    flex: 1;
+    max-width: 50%;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 8px
+  }
+
+  .heading-style {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: #1a202c;
+  }
+
+.more {
+    margin-top: 1rem;
+    display: inline-block;
+    color: green;
+    padding: 0.5rem 1rem;
+    border: 2px solid rgb(21, 211, 62);
+    background-color: transparent;
+    font-size: 1rem;
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .more:hover {
+    background-color: rgb(21, 211, 62);
+    color: white;
+    border-color: rgb(21, 211, 62);
+  }
+
+/* Contact Form Styles */
+.input-style {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-top: 5px;
+}
+
+.form-style {
+  margin-bottom: 15px;
+}
+
+.button-style {
+  background-color: #28a745;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.links {
+  color: black;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.social-style {
+  font-size: 20px;
+  color: #28a745;
+}
+
+.contact-style {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #000;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.icon-color {
+  color: #25D366
+}
+
