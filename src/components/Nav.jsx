@@ -57,13 +57,13 @@ const Nav = () => {
                   display: 'flex',listStyle: 'none',margin: 0,padding: 0,gap: '20px',alignItems: 'center',fontSize: '15px',fontWeight: 'bold', color: '#333'
                 }}
               >
-                <li><a href="./" className="navlink">Home</a></li>
-                <li><a href="./about" className="navlink">About</a></li>
-                <li><a href="./product" className="navlink">Products</a></li>
-                <li><a href="./service" className="navlink">Services</a></li>
-                <li><a href="./blog" className="navlink">Blog</a></li>
+                <li><a href="/" className="navlink">Home</a></li>
+                <li><a href="/about" className="navlink">About</a></li>
+                <li><a href="/product" className="navlink">Products</a></li>
+                <li><a href="/service" className="navlink">Services</a></li>
+                <li><a href="/blog" className="navlink">Blog</a></li>
                 {/* Contact Button (Desktop) */}
-                <li><a href="./contact" className='navlink' style={{
+                <li><a href="/contact" className='navlink' style={{
                   padding: '8px 16px',backgroundColor: '#28a745',color: '#fff',border: 'none',borderRadius: '20px',fontWeight: 'bold',textDecoration: 'none',display: 'flex',alignItems: 'center',gap: '5px',cursor: 'pointer'
                 }}>Contact <span>→</span></a></li>
               </ul>
@@ -84,13 +84,13 @@ const Nav = () => {
               listStyle: 'none',padding: 0,margin: 0,display: 'flex',flexDirection: 'column',gap: '10px',fontSize: '15px',fontWeight: 'bold', color: '#333',
             }}
           >
-            <li><a href="./" className="navlink" style={{ textDecoration: 'none', color: '#333' }} onClick={handleLinkClick}>Home</a></li>
-            <li><a href="./about" className="navlink" style={{ textDecoration: 'none', color: '#333' }} onClick={handleLinkClick}>About</a></li>
-            <li><a href="./product" className="navlink" style={{ textDecoration: 'none', color: '#333' }} onClick={handleLinkClick}>Products</a></li>
-            <li><a href="./service" className="navlink" style={{ textDecoration: 'none', color: '#333' }} onClick={handleLinkClick}>Services</a></li>
-            <li><a href="./blog" className="navlink" style={{ textDecoration: 'none', color: '#333' }} onClick={handleLinkClick}>Blog</a></li>
+            <li><a href="/" className="navlink" style={{ textDecoration: 'none', color: '#333' }} onClick={handleLinkClick}>Home</a></li>
+            <li><a href="/about" className="navlink" style={{ textDecoration: 'none', color: '#333' }} onClick={handleLinkClick}>About</a></li>
+            <li><a href="/product" className="navlink" style={{ textDecoration: 'none', color: '#333' }} onClick={handleLinkClick}>Products</a></li>
+            <li><a href="/service" className="navlink" style={{ textDecoration: 'none', color: '#333' }} onClick={handleLinkClick}>Services</a></li>
+            <li><a href="/blog" className="navlink" style={{ textDecoration: 'none', color: '#333' }} onClick={handleLinkClick}>Blog</a></li>
             <li>
-              <a href="./contact" className="navlink" onClick={handleLinkClick} style={{ padding: '8px 16px',backgroundColor: '#28a745',color: '#fff',border: 'none',borderRadius: '20px',fontWeight: 'bold',textDecoration: 'none',display: 'flex',alignItems: 'center',gap: '5px',cursor: 'pointer', justifyContent: 'center' }}>
+              <a href="/contact" className="navlink" onClick={handleLinkClick} style={{ padding: '8px 16px',backgroundColor: '#28a745',color: '#fff',border: 'none',borderRadius: '20px',fontWeight: 'bold',textDecoration: 'none',display: 'flex',alignItems: 'center',gap: '5px',cursor: 'pointer', justifyContent: 'center' }}>
                 Contact <span>→</span>
               </a>
             </li>

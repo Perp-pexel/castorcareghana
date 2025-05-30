@@ -19,7 +19,7 @@ const Content = () => {
               We also train smallholder farmers in financial literacy and good agricultural practices. 
               We’re proud to have expanded our portfolio to include trading in other commodities including Cashew, Tiger Nuts and Ginger.
             </p>
-            <a href="./about" className='more'>Read More <span>→</span></a>
+            <a href="/about" className='more'>Read More <span>→</span></a>
           </div>
           <img src={t5} alt="about" className='img-style' />
         </div>
@@ -41,7 +41,7 @@ const Content = () => {
               <li>Quality control and assurance through standardized processes and certifications</li>
               <li>Payment processing and financing solutions for buyers and sellers</li>
             </ul>
-            <a href="./service" className='more'>Read More <span>→</span></a>
+            <a href="/service" className='more'>Read More <span>→</span></a>
           </div>
         </div>
       </section>
