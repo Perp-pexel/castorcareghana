@@ -18,7 +18,10 @@ function App() {
         {
           index: true,
           element: <Home/>,
-        },
+        }
+         ],
+         },
+          
 
         {
           path: "/about",
@@ -40,8 +43,10 @@ function App() {
           path: "/contact",
           element: <Contact />,
         },
-      ],
-    },
+
+        
+     
+   
 
   ]);
   return <RouterProvider router={router} />;

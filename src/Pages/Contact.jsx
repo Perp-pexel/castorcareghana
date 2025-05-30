@@ -2,6 +2,7 @@ import React from 'react';
 import {FaPhone,FaEnvelope,FaFacebook,FaInstagram,FaTwitter,FaWhatsapp,FaLinkedin,FaYoutube,FaTiktok} from 'react-icons/fa';
 import contact from '../assets/contact.jpg';
 import '../App.css';
+import Nav from '../components/Nav.jsx';
 
 
 const Divider = () => (
@@ -14,6 +15,9 @@ const Divider = () => (
 
 const Contact = () => {
   return (
+    <div>
+    <Nav/>
+    
     <div style={{ padding: '40px', fontFamily: 'Arial, sans-serif', marginTop: '5%' }}>
       <h1 style={{ textAlign: 'center', marginBottom: '10px' }}>Get in Touch</h1>
       <p style={{ textAlign: 'center', marginBottom: '40px' }}>
@@ -120,6 +124,7 @@ const Contact = () => {
         </div>
       </div>
     </div>
+  </div>
   </div>
   );
 };
