@@ -110,7 +110,7 @@ const Contact = () => {
         {/* Map */}
         <div style={{margin: '0 20px',alignItems: 'right', justifyContent: 'right'}}>
           <h2 style={{ textAlign: 'Right', marginTop: '5%', marginRight: '25%' , fontSize: '30px' }}>Our Location</h2>
-          <div style={{ flex: '1 1 55%', minWidth: '300px', borderRadius: '10px', overflow: 'hidden' }}>
+          <div style={{ flex: '1 1 55%', minWidth: '500px', borderRadius: '10px', overflow: 'hidden' }}>
             <iframe
               title="Castor Care Ghana Location"
               width="100%"

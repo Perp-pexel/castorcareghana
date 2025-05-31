@@ -7,7 +7,7 @@ import o1 from '../assets/o2.webp';
 import t3 from '../assets/t3.jpg';
 import '../App.css';
 
-const images = [g2, c3, m1, n1, o1, t3];
+const images = [c3, o1, m1, n1, g2, t3];
 
 const Hero = () => {
   const [currentIndex, setCurrentIndex] = useState(0);

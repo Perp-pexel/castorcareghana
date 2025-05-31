@@ -18,15 +18,13 @@ function App() {
         {
           index: true,
           element: <Home/>,
-        }
-         ],
-         },
-          
+        },
 
         {
           path: "/about",
           element: <About />,
         },
+  
         {
           path: "/service",
           element: <Service />,
@@ -39,12 +37,15 @@ function App() {
           path: "/blog",
           element: <Blog />,
         },
-        {
+       
+
+     ],
+         }, 
+         
+          {
           path: "/contact",
           element: <Contact />,
         },
-
-        
   ]);
   return <RouterProvider router={router} />;
 }

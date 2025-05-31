@@ -37,7 +37,7 @@ const Nav = () => {
         {isMobile ? (
           <div style={{ display: 'flex', alignItems: 'center', marginLeft: 'auto', gap: '10px' }}>
             {/* Contact icon for mobile */}
-            <a href="./contact" style={{ fontSize: '20px', textDecoration: 'none', color: '#228B22' }}>
+            <a href="tel:+233244185012" target="_blank" rel="noopener noreferrer" style={{ fontSize: '20px', textDecoration: 'none', color: '#228B22' }}>
               ☎️
             </a>
             {/* Hamburger */}
@@ -58,7 +58,7 @@ const Nav = () => {
                   display: 'flex',listStyle: 'none',margin: 0,padding: 0,gap: '20px',alignItems: 'center',fontSize: '15px',fontWeight: 'bold', color: '#333'
                 }}
               >
-              <Link to="/" className="navlink">HOME</Link>
+              <Link to="/" className="navlink">Home</Link>
               <Link to="/about" className="navlink">About</Link>
               <Link to="/product" className="navlink">Products</Link>
               <Link to="/service" className="navlink">Services</Link>
@@ -77,16 +77,15 @@ const Nav = () => {
       {isMobile && menuOpen && (
         <div
           style={{
-            position: 'absolute',top: '100px',right: '20px',backgroundColor: '#fff',border: '1px solid #ddd',borderRadius: '8px',boxShadow: '0 4px 6px rgba(0,0,0,0.1)', padding: '10px 15px',zIndex: '1000'
-          }}
+            position: 'absolute',top: '100px',right: '20px',backgroundColor: '#fff',border: '1px solid #ddd',borderRadius: '8px',boxShadow: '0 4px 6px rgba(0,0,0,0.1)', padding: '10px 15px',zIndex: '1000', position:'fixed'}}
         >
           <ul
             style={{
               listStyle: 'none',padding: 0,margin: 0,display: 'flex',flexDirection: 'column',gap: '10px',fontSize: '15px',fontWeight: 'bold', color: '#333',
             }}
           >
-            <Link to="/" className="text-gray-700 hover:text-[#019A28] hover:underline transition-colors font-medium">
-                HOME
+            <Link to="/" className='navlink' style={{ textDecoration: 'none', color: '#333' }} onClick={handleLinkClick}>
+                Home
               </Link>
             <Link to="/about" className="navlink" style={{ textDecoration: 'none', color: '#333' }} onClick={handleLinkClick}>About</Link>
             <Link to="/product" className="navlink" style={{ textDecoration: 'none', color: '#333' }} onClick={handleLinkClick}>Products</Link>

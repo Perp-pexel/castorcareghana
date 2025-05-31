@@ -48,7 +48,7 @@ const Content = () => {
 
       <section>
         <div className='target-container' style={{display:'flex', flexDirection:'row',flexWrap:'wrap',justifyContent:'space-between',alignItems:'center',gap:'20px',padding:'20px',}}>
-          <div className='target' style={{width:'40%',padding:'10px 55px',borderRight:'2px solid #90ee90'}}>
+          <div className='target' style={{width:'40%',padding:'10px 55px',borderRight:'2px solid #90ee90', minWidth:'300px'}}>
             <h4>Our Target Market</h4>
             <h2 style={{ color:'green'}}> We are committed to working with key stakeholders across the agricultural value chain, including:</h2>
             <ul>
@@ -61,10 +61,10 @@ const Content = () => {
           <div className='target' style={{width:'40%',padding:'10px 55px', borderLeft:'2px solid #90ee90'}}>
             <p>At Castor Care Ghana our mission is to revolutionize the agricultural landscape by providing cutting-edge technology solutions that optimize the farm-to-table supply chain.</p>
 
-            <div className='founder-container' style={{display:'flex',alignItems:'center',gap:'20px'}}>
+            <div className='founder-container' style={{display:'flex',alignItems:'center',gap:'20px', width:'40%', minWidth:'500px'}}>
             <img className='founder-style' style={{width:'100px',height:'100px',borderRadius:'50%'}} src={founder} alt="founder" />
             <div className='founder-text' style={{lineHeight:'0.5'}}> 
-            <h1>Kwaku Anim-Asiedu</h1>
+            <h3>Kwaku Anim-Asiedu</h3>
             <p style={{color:'green'}}>Founder & CEO of Castor Care Ghana</p>
             </div>
             </div>
