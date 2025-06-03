@@ -4,6 +4,7 @@ import t5 from '../assets/t5.webp';
 import founder from '../assets/founder.jpg';
 import h3 from '../assets/team/h3.jpg';
 import '../App.css';
+import { Link } from 'react-router-dom';
 
 const Content = () => {
   const [showOverlay, setShowOverlay] = useState(false);
@@ -25,7 +26,7 @@ const Content = () => {
               We also train smallholder farmers in financial literacy and good agricultural practices. 
               We’re proud to have expanded our portfolio to include trading in other commodities including Cashew, Tiger Nuts and Ginger.
             </p>
-            <a href="/about" className='more'>Read More <span>→</span></a>
+            <Link to="/about" className='more'>Read More <span>→</span></Link>
           </div>
           <img src={t5} alt="about" className='img-style' />
         </div>
@@ -46,7 +47,7 @@ const Content = () => {
               <li>Quality control and assurance through standardized processes and certifications</li>
               <li>Payment processing and financing solutions for buyers and sellers</li>
             </ul>
-            <a href="/service" className='more'>Read More <span>→</span></a>
+            <Link to="/service" className='more'>Read More <span>→</span></Link>
           </div>
         </div>
       </div>
