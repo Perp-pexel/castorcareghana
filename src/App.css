@@ -1,0 +1,422 @@
+
+.hero-container::before{
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.219), rgba(0, 0, 0, 0.219));
+    z-index: 1;
+}
+.navlink {
+  text-decoration: none;
+  color: inherit;
+  padding: 0.5em 1em;
+  border-radius: 4px;
+  transition: background 0.3s;
+}
+
+.navlink:hover {
+  background: forestgreen;
+  color: white;
+}
+
+.navlink.active {
+  background: #4caf50;
+  color: white;
+}
+.navlink.active:hover {
+  background: #45a049;
+}
+.navlink:focus {
+  outline: 2px solid #4caf50;
+  outline-offset: 2px;
+}
+
+
+/* footer */
+.link-style {
+  color: #fff;
+  text-decoration: none;
+  margin-bottom: 8px;
+  display: block;
+  font-size: 17px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.link-style:hover {
+  color: #90ee90;
+}
+
+
+.social-icon {
+  font-size: 20px;
+  color: #90ee90;
+}
+
+/* Content */
+ 
+    .section-style {
+      width: 80%;
+      height: 50%;
+      margin: 7rem auto;
+      padding: 2rem;
+      background-color: #f9f9f9;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+  .flex-container {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .text-style {
+    flex: 1;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #333;
+    max-width: 50%;
+  }
+
+  .img-style{
+    flex: 1;
+    max-width: 50%;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 8px
+  }
+
+  .heading-style {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: #333;
+  }
+
+.more {
+    margin-top: 1rem;
+    display: inline-block;
+    color: green;
+    padding: 0.5rem 1rem;
+    border: 2px solid rgb(21, 211, 62);
+    background-color: transparent;
+    font-size: 1rem;
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .more:hover {
+    background-color: rgb(21, 211, 62);
+    color: white;
+    border-color: rgb(21, 211, 62);
+  }
+
+/* Contact Form Styles */
+.input-style {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-top: 5px;
+}
+
+.form-style {
+  margin-bottom: 15px;
+}
+
+.button-style {
+  background-color: #28a745;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.links {
+  color: black;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.social-style {
+  font-size: 20px;
+  color: #28a745;
+}
+
+.contact-style {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #000;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.icon-color {
+  color: #25D366
+}
+
+
+/* product */
+.product-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 2px;
+}
+
+.product-card1,
+.product-card2,
+.product-card3,
+.product-card4,
+.product-card5,
+.product-card6 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  width: 250px;
+}
+
+.product-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.product-image {
+  width: 80%;
+  height: auto;
+  object-fit: cover;
+}
+
+.product-details {
+  margin-top: 20px;
+}
+
+.product-title {
+  font-size: 25px;
+  font-weight: bold;
+  color: green;
+  margin-bottom: 10px;
+}
+
+.product-description {
+  font-size: 16px;
+  color: #555;
+  text-align: justify;
+}
+
+/* About */
+.statement {
+  flex: 1 1 30%;
+  padding: 20px;
+  border-top: 4px solid green;
+  border-right: 4px solid green;
+  border-radius: 8px;
+  background-color: #fdfdfd;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+  min-height: 250px;
+  line-height: 1.5;
+}
+
+.team-card {
+   width: 220px;
+    margin: 20px;
+   border-radius: 50px;
+   padding: 10px;
+}
+.team-image {
+   width: 100%;
+   height: 100%;
+   object-fit: cover;
+   border-radius: 12px;
+}
+.team-info {
+   text-align: center;
+   margin-top: 10px;
+}
+.team-name {
+   font-size: 1.2rem;
+   margin: 10px 0 5px;
+   color: #333;
+}
+.team-role {
+   font-size: 0.9rem;
+   color: #666;
+   margin: 0;
+}
+
+/* service */
+.service-card {
+  width: 100%;
+  padding: 20px;
+  border-radius: 10px;
+}
+.service-img {
+  width: 70%;
+  height: 30%;
+  object-fit: cover;
+  border-radius: 50%;
+  border-right: #28a745 20px solid;
+}
+
+
+.service-title {
+  font-size: 1.2rem;
+  margin: 20px 0;
+  color: #333;
+  font-weight: bold;
+  text-align: center;
+}
+.service-description {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 10px;
+}
+.service-quote {
+  font-size: 0.9rem;
+  color: #999;
+  margin: 0;
+}
+.service-link {
+  text-decoration: none;
+  color: #28a745;
+  font-weight: bold;
+}
+.service-link:hover {
+  text-decoration: underline;
+}
+
+/* Blog */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.container {
+  margin: 100px;
+  padding: 0 20px 40px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #222;
+  line-height: 1.6;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 50px;
+  margin-top: 5%;
+  animation: fadeInUp 1s ease forwards;
+}
+
+
+
+.section {
+  margin-bottom: 4rem;
+  animation: fadeInUp 1s ease forwards;
+}
+
+.section-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #800020;
+  border-bottom: 3px solid #800020;
+  padding-bottom: 8px;
+  margin-bottom: 1.8rem;
+}
+
+.product-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 30px;
+}
+
+.product-button {
+  background: #800020;
+  color: #fff;
+  padding: 12px 15px;
+  font-weight: bold;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s;
+  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.1);
+}
+
+.product-button:hover {
+  background: #a0002a;
+}
+
+.product-detail {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  align-items: flex-start;
+  gap: 30px;
+  max-width: 880px;
+  margin: 0 auto;
+  background: #fff0f4;
+  border-radius: 14px;
+  padding: 30px;
+  box-shadow: 0 8px 24px rgba(128, 0, 32, 0.1);
+}
+
+.product-name {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #800020;
+  margin: 0;
+  text-align: center;
+}
+
+.benefit-list {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 0;
+}
+
+.benefit-item {
+  background: #fff3f6;
+  border-left: 5px solid #800020;
+  padding: 15px 20px;
+  font-size: 1.1rem;
+  margin-bottom: 15px;
+  border-radius: 6px;
+  color: #4d2c2c;
+  font-weight: 600;
+  box-shadow: 0 4px 8px rgba(128, 0, 32, 0.1);
+  transition: background 0.3s ease;
+}
+
+.benefit-item:hover {
+  background: #fbe2e9;
+}
+
+.footer {
+  text-align: center;
+  margin-top: 70px;
+  color: #999;
+  font-size: 0.9rem;
+  letter-spacing: 0.04em;
+}
