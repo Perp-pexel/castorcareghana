@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import c3 from '../assets/c3.jpg';
-import g2 from '../assets/g2.jpg';
-import m1 from '../assets/m1.jpg';
-import n1 from '../assets/n1.webp';
-import o1 from '../assets/o2.webp';
+import g1 from '../assets/g1.webp';
+import m5 from '../assets/m5.jpg';
+import n6 from '../assets/n6.jpg';
+import o7 from '../assets/o7.jpg';
 import t3 from '../assets/t3.jpg';
 import so2 from '../assets/so2.jpg';
+import s16 from '../assets/s16.jpg';
 import '../App.css';
 import { Link } from 'react-router-dom';
 
-const images = [c3, o1, m1, n1, g2, t3, so2];
+const images = [ c3, o7, m5, n6, g1, t3, so2, s16];
 
 const Hero = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -33,15 +34,15 @@ const Hero = () => {
   return (
     <div className="hero-container" style={{ position: 'relative', overflow: 'hidden', marginTop: '5%', background: 'linear-gradient(to bottom, rgb(0, 0, 0), rgba(0, 0, 0, 0.5))' }}>
       <div className="hero-image" style={{ position: 'relative', height: '90vh' }}>
-        <img
+        <img 
           src={images [currentIndex]}
           alt="hero"
           style={{
             width: '100%',
             height: '100%',
             objectFit: 'cover',
+            justifyContent: 'center',
             opacity: 1,
-           
             // filter: 'brightness(0.7)',
             transition: '0.5s ease-in-out',
             position: 'absolute',
@@ -52,21 +53,21 @@ const Hero = () => {
         <div
           className="nav-box left"
           onClick={prev}
-          style={{ position: 'absolute',top: '50%',left: '20px',transform: 'translateY(-50%)',fontSize: '2rem',background: 'rgba(0,0,0,0.3)', color: 'white',padding: '10px',borderRadius: '50%',cursor: 'pointer',zIndex: 10,opacity: showArrows ? 1 : 0,transition: 'opacity 0.3s ease'}}
+          style={{ position: 'absolute',top: '50%',left: '20px',transform: 'translateY(-50%)',fontSize: '2rem',background: 'rgba(0,0,0,0.3)', color: 'white',padding: '10px',borderRadius: '50%',cursor: 'pointer',zIndex: 1,opacity: showArrows ? 1 : 0,transition: 'opacity 0.3s ease'}}
           >
           ❮
         </div>
         <div
           className="nav-box right"
           onClick={next}
-          style={{position: 'absolute',top: '50%',right: '20px',transform: 'translateY(-50%)',fontSize: '2rem',background: 'rgba(0,0,0,0.3)',color: 'white',padding: '10px',borderRadius: '50%',cursor: 'pointer',zIndex: 10,opacity: showArrows ? 1 : 0,transition: 'opacity 0.3s ease'}}
+          style={{position: 'absolute',top: '50%',right: '20px',transform: 'translateY(-50%)',fontSize: '2rem',background: 'rgba(0,0,0,0.3)',color: 'white',padding: '10px',borderRadius: '50%',cursor: 'pointer',zIndex: 1,opacity: showArrows ? 1 : 0,transition: 'opacity 0.3s ease'}}
           >
           ❯
         </div>
       </div>
 
       {/* Dots */}
-      <div className="dots" style={{display: 'flex', justifyContent: 'center', gap: '10px', position: 'absolute', bottom: '15px', width: '100%'}}>
+      <div className="dots" style={{display: 'flex', justifyContent: 'center', gap: '10px', position: 'absolute', bottom: '15px', width: '100%', zIndex: 1}}>
 
         {images.map((_, index) => (
           <div
