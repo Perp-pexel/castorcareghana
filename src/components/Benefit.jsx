@@ -128,14 +128,7 @@ const Benefit = () => {
       <h2 style={{  margin: '80px', marginBottom: '20px', color: '#2e7d32' }}>Latest Stories</h2>
        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '50px', justifyContent: 'center', marginBottom: '60px', margin: '0 50px' }}>
         {blogPosts.map((post, index) => (
-          <div
-            key={index}
-            style={{
-              backgroundColor: '#fff',
-              borderRadius: '12px',
-              padding: '20px',
-              maxWidth: '300px',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+          <div key={index}style={{ backgroundColor: '#fff', borderRadius: '12px', padding: '20px', maxWidth: '300px',boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
             }}
           >
             <h3 style={{ fontSize: '1.2rem', color: '#333', marginBottom: '10px' }}>{post.title}</h3>

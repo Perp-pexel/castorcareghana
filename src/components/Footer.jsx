@@ -67,12 +67,12 @@ const Footer = () => {
 
         <div className="footer-bottom" style={{ marginTop: '40px', textAlign: 'center', borderTop: '1px solid #eee', paddingTop: '15px', fontSize: '14px' }}>
           <p>&copy; {new Date().getFullYear()} Castor Care Ghana. All rights reserved.</p>
-          <p>
+          {/* <p>
             Powered by 
            <a href="https://www.absa.com.gh/business/absa-young-africa-works-programme/" target="_blank" rel="noopener noreferrer"><img src={absa} alt="" style={{ width: '25px', marginLeft: '5px' }} /></a> 
            <a href="https://vc4a.com/mest/" target="_blank" rel="noopener noreferrer"><img src={mestafrica} alt="Your Design Company Logo" style={{ width: '25px', marginLeft: '5px' }} /></a>
 
-          </p>
+          </p> */}
         </div>
       </footer>
     </div>
