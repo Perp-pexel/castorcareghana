@@ -32,20 +32,20 @@ const Hero = () => {
   }, []);
 
   return (
-    <div className="hero-container" style={{ position: 'relative', overflow: 'hidden', marginTop: '5%', background: 'linear-gradient(to bottom, rgb(0, 0, 0), rgba(0, 0, 0, 0.5))' }}>
-      <div className="hero-image" style={{ position: 'relative', height: '90vh' }}>
+    <div className="hero-container" style={{ position: 'relative', overflow: 'hidden', marginTop: '5%', background: 'linear-gradient(to bottom, rgb(0, 0, 0), rgba(0, 0, 0, 0.5))', height: '100vh', width: '100%' }}>
+      <div className="hero-image" style={{ position: 'relative', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', width: '100%' }}>
         <img 
           src={images [currentIndex]}
           alt="hero"
           style={{
             width: '100%',
-            height: '100%',
-            objectFit: 'cover',
+            height: '100vh',
+            // objectFit: 'cover',
             justifyContent: 'center',
             opacity: 1,
             // filter: 'brightness(0.7)',
             transition: '0.5s ease-in-out',
-            position: 'absolute',
+            // position: 'absolute',
           }}
         />
 

@@ -22,7 +22,7 @@ const Media = () => {
     : galleryVideos.slice(0, 3);
 
   return (
-    <div style={{padding: "40px 20px",fontFamily: "sans-serif",backgroundColor: "#f9f9f9", margin: '30px 50px', padding: '20px 50px' }} >
+    <div style={{padding: "40px 20px",fontFamily: "sans-serif",backgroundColor: "#f9f9f9", margin: '30px 50px' }} >
      
       <div>
         <h2 style={{textAlign: "center",marginBottom: "30px",color: "#2e7d32", fontSize: "2rem"}}>Gallery</h2>

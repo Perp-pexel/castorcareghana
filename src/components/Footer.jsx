@@ -2,8 +2,7 @@ import React from 'react';
 import logo2 from '../assets/logo2.png';
 import '../App.css';
 import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaFacebook, FaInstagram, FaTwitter, FaLinkedin, FaYoutube, FaTiktok, FaWhatsapp, } from 'react-icons/fa';
-import absa from '../assets/absa.png';
-import mestafrica from '../assets/mestafrica.jpg';
+
 
 const Footer = () => {
   return (
@@ -52,12 +51,12 @@ const Footer = () => {
             </ul>
             <p style={{ marginTop: '10px' }}>Follow us on</p>
             <div style={{ marginTop: '5px', display: 'flex', gap: '10px' }}>
-              <a className='social-icon' href="https://www.facebook.com/castorcareghana" target="_blank" rel="noopener noreferrer"><FaFacebook /></a>
-              <a className='social-icon' href="https://www.instagram.com/castorcareghana" target="_blank" rel="noopener noreferrer"><FaInstagram /></a>
+              <a className='social-icon' href="https://www.facebook.com/profile.php?id=61573519845973" target="_blank" rel="noopener noreferrer"><FaFacebook /></a>
+              <a className='social-icon' href="https://www.instagram.com/castorcareghana?igsh=MWlydHZhanB0MGkyZg%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer"><FaInstagram /></a>
               <a className='social-icon' href="https://www.linkedin.com/company/castor-care-ghana" target="_blank" rel="noopener noreferrer"><FaLinkedin /></a>
-              <a className='social-icon' href="https://www.twitter.com/castorcareghana" target="_blank" rel="noopener noreferrer"><FaTwitter /></a>
-              <a className='social-icon' href="https://www.youtube.com/@castorcareghana" target="_blank" rel="noopener noreferrer"><FaYoutube /></a>
-              <a className='social-icon' href="https://www.tiktok.com/@castorcareghana" target="_blank" rel="noopener noreferrer"><FaTiktok /></a>
+              {/* <a className='social-icon' href="https://www.twitter.com/castorcareghana" target="_blank" rel="noopener noreferrer"><FaTwitter /></a>
+              <a className='social-icon' href="https://www.youtube.com/@castorcareghana" target="_blank" rel="noopener noreferrer"><FaYoutube /></a> */}
+              <a className='social-icon' href="https://www.tiktok.com/@castorcareghana?is_from_webapp=1&sender_device=pc" target="_blank" rel="noopener noreferrer"><FaTiktok /></a>
             </div>
           </div>
         </div>

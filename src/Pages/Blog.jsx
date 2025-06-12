@@ -8,7 +8,7 @@ const Blog = () => {
   return (
     <div>
       <Nav />
-      <div className="blog-header" style={{ textAlign: "left",display: "flex", flexDirection: "column", justifyContent: "left", lineHeight: "0", marginLeft: "60%", marginTop: "10%" }}>
+      <div className="blog-header" style={{ textAlign: "left",display: "flex", flexDirection: "column", justifyContent: "left", marginLeft: "60%", marginTop: "10%" }}>
         <h1 style={{ fontSize: "2.5rem", color: "#333"}}>
         Castor EcoLearn Hub</h1>
         <p style={{ color: '#555', fontSize: '1.2rem' }}>Stay updated with our latest news, stories, and insights.</p>

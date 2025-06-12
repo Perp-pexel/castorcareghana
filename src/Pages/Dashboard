@@ -1,0 +1,32 @@
+// // src/Pages/Dashboard.tsx
+// import React from 'react';
+// import AdminDashboard  from '../components/Dashboard/AdminDashboard';
+// import { FarmerDashboard } from '../components/Dashboard/FarmerDashboard';
+// import { UserDashboard } from '../components/Dashboard/UserDashboard';
+// import Loader from '../components/common/Loader';
+// import { getRole } from '../utils/auth';
+
+// export const Dashboard: React.FC = () => {
+//   const [role, setRole] = React.useState<string | null>(null);
+
+//   React.useEffect(() => {
+//     const r = getRole()?.toLowerCase() ?? null;
+//     setRole(r);
+//   }, []);
+
+//   if (!role) return <Loader message="Loading your dashboard…" />;
+//   if (!['admin', 'farmer', 'user'].includes(role))
+//     return <div style={{ color: 'red' }}>Access denied: unsupported role “{role}”</div>;
+
+//   switch (role) {
+//     case 'admin':
+//       return <AdminDashboard />;
+//     case 'farmer':
+//       return <FarmerDashboard />;
+//     case 'user':
+//       return <UserDashboard />;
+//     default:
+//       return null;
+//   }
+// };
+// export default Dashboard;

@@ -177,7 +177,7 @@ const Benefit = () => {
         <h2 className="courses-title">🎓 Recommended Courses</h2>
         <div className="courses" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: '30px' }}>
           {courses.map((course, i) => (
-            <a href={course.link} key={i} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', lineHeight: '0.5' }} className="course-card">
+            <a href={course.link} key={i} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', lineHeight: '1' }} className="course-card">
               <img src={course.image} alt={course.title} className="course-image" style={{ width: '70%', height: 'auto' }} />
               <div className="course-info" style={{  }}>
                 <h3 className="course-title" style={{ fontSize: '15px' }}>{course.title}</h3>

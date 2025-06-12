@@ -1,15 +1,15 @@
 import React from 'react'
 import Hero from '../components/Hero'
 import Content from '../components/Content'
-import ProductCard from '../components/ProductCard'
+import ProductGrid from '../components/ProductGrid'
 import Review from '../components/Review'
 
 const Home = () => {
   return (
     <div>
       <Hero/>
+      <ProductGrid />
       <Content/>
-      <ProductCard />
       <Review/>
     </div>
   )
