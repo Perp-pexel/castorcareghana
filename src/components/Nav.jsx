@@ -69,7 +69,7 @@ const Nav = () => {
       </header>
 
       {isMobile && menuOpen && (
-        <div className="absolute top-[70px] right-0 bg-white border border-gray-300 rounded-md shadow-lg p-4 z-50">
+        <div className="fixed top-[70px] right-0 bg-white border border-gray-300 rounded-md shadow-lg p-4 z-50">
           <ul className="flex flex-col gap-3 text-sm font-bold text-gray-800">
             <Link to="/" className="navlink" onClick={handleLinkClick}>Home</Link>
             <Link to="/about" className="navlink" onClick={handleLinkClick}>About</Link>
