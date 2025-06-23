@@ -147,8 +147,8 @@ const ProductGrid = () => {
       : 0;
 
   return (
-    <div style={{ padding: '40px', marginTop: '5%', fontFamily: 'Arial, sans-serif', color: '#333' }}>
-      <h2 style={{ textAlign: 'center', marginBottom: '30px' }}>
+    <div style={{ padding: '40px', marginTop: '8%', fontFamily: 'Arial, sans-serif', color: '#333' }}>
+      <h2 style={{ fontSize: '30px', fontWeight: 'bold', textAlign: 'center', marginBottom: '30px' }}>
         Order Our Products
       </h2>
 

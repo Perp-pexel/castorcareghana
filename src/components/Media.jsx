@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 
-// Sample gallery content
 const galleryImages = Array.from(
   { length: 20 },
   (_, i) => `/gallery/img${i + 1}.jpg`
@@ -22,48 +21,56 @@ const Media = () => {
     : galleryVideos.slice(0, 3);
 
   return (
-    <div style={{padding: "40px 20px",fontFamily: "sans-serif",backgroundColor: "#f9f9f9", margin: '30px 50px' }} >
-     
-      <div>
-        <h2 style={{textAlign: "center",marginBottom: "30px",color: "#2e7d32", fontSize: "2rem"}}>Gallery</h2>
+    <div className="px-5 py-10 bg-gray-50 font-sans mx-12 my-8">
+      <h2 className="text-3xl text-center text-green-700 font-bold mb-8">
+        Gallery
+      </h2>
 
-        {/* Image Gallery */}
-        <div style={{display: "grid",gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",gap: "20px",justifyItems: "center",margin: "50px 10px"}}>
-
-          {visibleImages.map((src, index) => (
-            <img key={index} src={src} alt={`Gallery ${index + 1}`} style={{ width: "100%",height: "170px", objectFit: "cover",borderRadius: "10px",boxShadow: "0 4px 12px rgba(0,0,0,0.1)"}} /> 
-            ))}
-            
-        </div>
-        {galleryImages.length > 5 && (
-          <div style={{ textAlign: "center", marginBottom: "40px" }}>
-
-            <button onClick={() => setShowAllImages(!showAllImages)}
-              style={{padding: "10px 25px",backgroundColor: "#2e7d32", color: "#fff", border: "none", borderRadius: "20px", fontSize: "1rem", cursor: "pointer"}}>
-              {showAllImages ? "Show Less" : "View More Images"}
-            </button>
-          </div>
-        )}
-
-        {/* Video Gallery */}
-
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "20px", justifyItems: "center", margin: "60px 0px" }}>
-
-          {visibleVideos.map((src, index) => (
-            <video key={index} controls src={src} style={{ width: "100%", height: "200px", borderRadius: "10px", backgroundColor: "#000", boxShadow: "0 4px 12px rgba(0,0,0,0.1)", objectFit: "cover" }} />
-          ))}
-        </div> 
-        
-        {galleryVideos.length > 3 && (
-          <div style={{ textAlign: "center" }}>
-            <button
-              onClick={() => setShowAllVideos(!showAllVideos)}
-              style={{padding: "10px 25px",backgroundColor: "#2e7d32",color: "#fff",border: "none", borderRadius: "20px", fontSize: "1rem", cursor: "pointer"}}>
-              {showAllVideos ? "Show Less" : "View More Videos"}
-            </button>
-          </div>
-        )}
+      {/* Image Gallery */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 mb-8">
+        {visibleImages.map((src, index) => (
+          <img
+            key={index}
+            src={src}
+            alt={`Gallery ${index + 1}`}
+            className="w-full h-44 object-cover rounded-lg shadow-md"
+          />
+        ))}
       </div>
+
+      {galleryImages.length > 5 && (
+        <div className="text-center mb-10">
+          <button
+            onClick={() => setShowAllImages(!showAllImages)}
+            className="px-6 py-2 bg-green-700 text-white rounded-full text-base hover:bg-green-800 transition"
+          >
+            {showAllImages ? "Show Less" : "View More Images"}
+          </button>
+        </div>
+      )}
+
+      {/* Video Gallery */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        {visibleVideos.map((src, index) => (
+          <video
+            key={index}
+            controls
+            src={src}
+            className="w-full h-52 rounded-lg bg-black shadow-md object-cover"
+          />
+        ))}
+      </div>
+
+      {galleryVideos.length > 3 && (
+        <div className="text-center">
+          <button
+            onClick={() => setShowAllVideos(!showAllVideos)}
+            className="px-6 py-2 bg-green-700 text-white rounded-full text-base hover:bg-green-800 transition"
+          >
+            {showAllVideos ? "Show Less" : "View More Videos"}
+          </button>
+        </div>
+      )}
     </div>
   );
 };

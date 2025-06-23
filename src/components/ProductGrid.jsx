@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import o4 from '../assets/product/o4.webp';
@@ -13,6 +12,8 @@ import g5 from '../assets/product/g5.avif';
 import so1 from '../assets/product/so1.jpg';
 import n9 from '../assets/product/n9.jpg';
 import n10 from '../assets/product/n10.avif';
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+
 
 const products = [
   { id: 1, name: 'Castor Oil', price: { kg: 20, bag: 300 }, image: o4 },
@@ -36,33 +37,6 @@ const currencySymbols = {
 
 const supportedCurrencies = Object.keys(currencySymbols);
 
-const ProductCard = ({ product, onClick, convertPrice, currency }) => (
-  <div
-    onClick={() => onClick(product)}
-    style={{
-      width: '280px', height: '340px',
-      padding: '16px', border: '1px solid #ccc',
-      borderRadius: '10px', textAlign: 'center',
-      boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
-      cursor: 'pointer',
-    }}
-  >
-    <img
-      src={product.image}
-      alt={product.name}
-      style={{
-        width: '100%', height: '200px',
-        objectFit: 'cover', borderRadius: '8px',
-      }}
-    />
-    <h3>{product.name}</h3>
-    <p>
-      From: {currencySymbols[currency]}
-      {convertPrice(product.price.kg).toFixed(2)} / kg
-    </p>
-  </div>
-);
-
 const ProductGrid = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [quantity, setQuantity] = useState('');
@@ -74,6 +48,10 @@ const ProductGrid = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showPayment, setShowPayment] = useState(false);
   const [paymentAmount, setPaymentAmount] = useState(0);
+  const [productsPerPage, setProductsPerPage] = useState(3);
+
+  const touchStartX = useRef(null);
+  const touchEndX = useRef(null);
 
   const API_KEY = 'cur_live_o7Ylcc946R6Gqz3cMpRX0IfpSWK5bx78FHkywNRK';
   const API_URL = 'https://api.currencyapi.com/v3/latest';
@@ -90,7 +68,6 @@ const ProductGrid = () => {
             currencies: supportedCurrencies.join(','),
           },
         });
-
         const fetchedRates = {};
         supportedCurrencies.forEach((curr) => {
           if (response.data.data[curr]) {
@@ -108,6 +85,17 @@ const ProductGrid = () => {
     fetchRates();
   }, []);
 
+  useEffect(() => {
+    const updateLayout = () => {
+      const isMobile = window.innerWidth < 768;
+      setProductsPerPage(isMobile ? 1 : 3);
+      setCurrentIndex(0);
+    };
+    updateLayout();
+    window.addEventListener('resize', updateLayout);
+    return () => window.removeEventListener('resize', updateLayout);
+  }, []);
+
   const convertPrice = (priceInGHS) => {
     if (currency === 'GHS' || !rates[currency]) return priceInGHS;
     return priceInGHS * rates[currency];
@@ -119,7 +107,7 @@ const ProductGrid = () => {
     setUnit('kg');
   };
 
-   const handlePayment = () => {
+  const handlePayment = () => {
     const amount = selectedProduct && quantity
       ? convertPrice(selectedProduct.price[unit]) * quantity
       : 0;
@@ -141,37 +129,46 @@ const ProductGrid = () => {
     return () => window.removeEventListener('message', handleMessage);
   }, []);
 
-  const PRODUCTS_PER_PAGE = 3;
-  
   const nextSlide = () => {
-    if (currentIndex + PRODUCTS_PER_PAGE < products.length) {
-      setCurrentIndex(currentIndex + PRODUCTS_PER_PAGE);
+    if (currentIndex + productsPerPage < products.length) {
+      setCurrentIndex(currentIndex + productsPerPage);
     }
   };
 
   const prevSlide = () => {
-    if (currentIndex - 3 >= 0) {
-      setCurrentIndex(currentIndex - 3);
+    if (currentIndex - productsPerPage >= 0) {
+      setCurrentIndex(currentIndex - productsPerPage);
     }
   };
 
-    const visibleProducts = products.slice(currentIndex, currentIndex + PRODUCTS_PER_PAGE);
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.changedTouches[0].clientX;
+  };
 
-  const totalPrice =
-    selectedProduct && quantity
-      ? convertPrice(selectedProduct.price[unit]) * quantity
-      : 0;
+  const handleTouchEnd = (e) => {
+    touchEndX.current = e.changedTouches[0].clientX;
+    if (touchStartX.current - touchEndX.current > 50) {
+      nextSlide(); // swipe left
+    } else if (touchEndX.current - touchStartX.current > 50) {
+      prevSlide(); // swipe right
+    }
+  };
+
+  const visibleProducts = products.slice(currentIndex, currentIndex + productsPerPage);
+  const totalPrice = selectedProduct && quantity
+    ? convertPrice(selectedProduct.price[unit]) * quantity
+    : 0;
 
   return (
-    <div style={{ padding: '40px', position: 'relative', fontFamily: 'Arial, sans-serif' }}>
-      <h2 style={{ textAlign: 'center', marginBottom: '30px' }}>Order Our Products</h2>
+    <div className="p-10 relative font-sans">
+      <h2 className="text-center text-2xl font-semibold mb-8">Order Our Products</h2>
 
-      <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-        <label>Select Currency: </label>
+      <div className="text-center mb-6">
+        <label className="mr-2">Select Currency:</label>
         <select
           value={currency}
           onChange={(e) => setCurrency(e.target.value)}
-          style={{ padding: '8px' }}
+          className="p-2 border rounded"
         >
           {supportedCurrencies.map((curr) => (
             <option key={curr} value={curr}>
@@ -179,122 +176,77 @@ const ProductGrid = () => {
             </option>
           ))}
         </select>
-          {loadingRates && <p>Loading exchange rates...</p>}
-          {error && <p style={{ color: 'red' }}>{error}</p>}
+        {loadingRates && <p className="text-sm text-gray-500">Loading exchange rates...</p>}
+        {error && <p className="text-sm text-red-600">{error}</p>}
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div className="flex items-center justify-center gap-6">
         <button
           onClick={prevSlide}
           disabled={currentIndex === 0}
-          style={{
-            fontSize: '18px',
-            marginRight: '20px',
-            background: '#28a745',
-            color: 'white',
-            padding: '10px',
-            borderRadius: '50%',
-            border: 'none',
-            cursor: 'pointer',
-          }}
-        >
-          ◀
+        className="bg-green-600 text-white p-3 rounded-full text-xl hover:bg-green-700 disabled:opacity-50"
+>
+  <FaChevronLeft />
         </button>
 
-        <div style={{ display: 'flex', gap: '30px' }}>
-          {products.slice(currentIndex, currentIndex + 3).map((product) => (
+        <div
+          className="flex gap-6 flex-col items-center md:flex-row md:justify-center"
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+        >
+          {visibleProducts.map((product) => (
             <div
               key={product.id}
               onClick={() => handleProductClick(product)}
-              style={{
-                width: '250px',
-                padding: '16px',
-                border: '1px solid #ccc',
-                borderRadius: '10px',
-                textAlign: 'center',
-                cursor: 'pointer',
-                boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
-              }}
+              className="w-full max-w-xs md:w-64 p-4 border rounded-lg text-center shadow-md cursor-pointer hover:shadow-lg"
             >
-              <img
-                src={product.image}
-                alt={product.name}
-                style={{
-                  width: '100%',
-                  height: '180px',
-                  objectFit: 'cover',
-                  borderRadius: '8px',
-                }}
-              />
-              <h3>{product.name}</h3>
-              <p>
-                From {currencySymbols[currency]}
-                {convertPrice(product.price.kg).toFixed(2)} / kg
-              </p>
+              <img src={product.image} alt={product.name} className="w-full h-44 object-cover rounded mb-2" />
+              <h3 className="font-semibold">{product.name}</h3>
+              <p>From {currencySymbols[currency]}{convertPrice(product.price.kg).toFixed(2)} / kg</p>
             </div>
           ))}
         </div>
 
         <button
           onClick={nextSlide}
-          disabled={currentIndex + 3 >= products.length}
-          style={{
-            fontSize: '18px',
-            marginLeft: '20px',
-            background: '#28a745',
-            color: 'white',
-            padding: '10px',
-            borderRadius: '50%',
-            border: 'none',
-            cursor: 'pointer',
-          }}
-        >
-          ▶
+          disabled={currentIndex + productsPerPage >= products.length}
+         className="bg-green-600 text-white p-3 rounded-full text-xl hover:bg-green-700 disabled:opacity-50"
+>
+  <FaChevronRight />
         </button>
       </div>
 
       {selectedProduct && (
-        <div style={{
-          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-          backgroundColor: 'rgba(0,0,0,0.6)', display: 'flex',
-          justifyContent: 'center', alignItems: 'center', zIndex: 1000
-        }}>
-          <div style={{
-            background: '#fff', padding: '30px', borderRadius: '10px',
-            width: '300px', position: 'relative'
-          }}>
-            <button onClick={() => setSelectedProduct(null)}
-              style={{
-                position: 'absolute', top: '10px', right: '15px',
-                background: 'none', border: 'none', fontSize: '1.2rem', cursor: 'pointer'
-              }}>✕</button>
-              <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-            <h2>{selectedProduct.name}</h2>
-            <p style={{fontSize: '0.8rem'}}>{currencySymbols[currency]}{convertPrice(selectedProduct.price.kg).toFixed(2)} / kg</p>
+        <div className="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded-lg w-80 relative">
+            <button
+              onClick={() => setSelectedProduct(null)}
+              className="absolute top-2 right-3 text-lg"
+            >✕</button>
+            <div className=" items-center mb-2">
+              <h2 className="text-lg font-bold">{selectedProduct.name}</h2>
             </div>
             <img
               src={selectedProduct.image}
               alt={selectedProduct.name}
-              style={{
-                width: '100%', height: '150px',
-                objectFit: 'cover', borderRadius: '8px',
-              }}
+              className="w-full h-50 object-cover rounded"
             />
-            <div style={{ marginTop: '15px' }}>
-              
-              <label>Quantity:</label>
+            
+            <div className="mt-4">
+              <p className="text-sm mt-2 text-right">{currencySymbols[currency]}{convertPrice(selectedProduct.price.kg).toFixed(2)} / kg</p>
+              <label className="block mb-1">Quantity:</label>
               <input
                 type="number"
                 min="1"
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
-                style={{ width: '100%', padding: '8px', margin: '8px 0' }}
+                className="w-full p-2 border rounded mb-2"
               />
-              <label>Unit:</label>
+              <label className="block mb-1">Unit:</label>
               <select
                 value={unit}
                 onChange={(e) => setUnit(e.target.value)}
-                style={{ width: '100%', padding: '8px', marginBottom: '15px' }}
+                className="w-full p-2 border rounded mb-4"
               >
                 <option value="kg">kg</option>
                 <option value="bag">bag</option>
@@ -302,15 +254,10 @@ const ProductGrid = () => {
                 <option value="liter">liter</option>
                 <option value="milliliters">ml</option>
               </select>
-              <p><strong>Total:</strong> {currencySymbols[currency]}{totalPrice.toFixed(2)}</p>
+              <p className="font-semibold">Total: {currencySymbols[currency]}{totalPrice.toFixed(2)}</p>
               <button
                 onClick={handlePayment}
-                style={{
-                  width: '100%', padding: '10px',
-                  background: '#28a745', color: 'white',
-                  border: 'none', borderRadius: '5px',
-                  fontSize: '16px', cursor: 'pointer',
-                }}
+                className="mt-3 w-full bg-green-600 text-white py-2 rounded hover:bg-green-700"
               >Confirm Order & Pay</button>
             </div>
           </div>
@@ -318,42 +265,30 @@ const ProductGrid = () => {
       )}
 
       {showPayment && (
-        <div style={{
-          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-          backgroundColor: 'rgba(0,0,0,0.7)', zIndex: 1000,
-          display: 'flex', justifyContent: 'center', alignItems: 'center',
-        }}>
-          <div style={{
-            position: 'relative', width: '80%',
-            height: '95vh', background: 'white',
-            borderRadius: '8px', overflow: 'hidden'
-          }}>
+        <div className="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50">
+          <div className="relative w-4/5 h-[95vh] bg-white rounded overflow-hidden">
             <button
               onClick={() => setShowPayment(false)}
-              style={{
-                position: 'absolute', top: 10, right: 10,
-                background: 'transparent', border: 'none',
-                fontSize: '1.5rem', cursor: 'pointer',
-              }}
+              className="absolute top-2 right-3 text-xl"
             >✕</button>
             <iframe
               title="Payment App"
               src={`${PAYMENT_URL}?amount=${paymentAmount}`}
-              style={{ width: '100%', height: '100%', border: 'none' }}
+              className="w-full h-full border-none"
               allow="payment"
             />
           </div>
         </div>
       )}
 
-        <div style={{ marginTop: '40px', textAlign: 'center' }}>
-          <Link to="/product" style={{
-            padding: '10px 20px', background: '#28a745',
-            color: 'white', borderRadius: '5px', textDecoration: 'none'
-          }}>
-            View All Products
-          </Link>
-        </div>
+      <div className="mt-10 text-center">
+        <Link
+          to="/product"
+          className="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+        >
+          View All Products
+        </Link>
+      </div>
     </div>
   );
 };

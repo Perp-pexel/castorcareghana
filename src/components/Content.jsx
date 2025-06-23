@@ -12,33 +12,15 @@ import s2 from '../assets/s2.jpg';
 import t4 from '../assets/t4.jpg';
 import o8 from '../assets/o8.webp';
 import so4 from '../assets/so4.png';
-import '../App.css';
 
 const ProductCard = ({ img, title, description }) => (
-  <div className="product-card" style={{
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    padding: '20px',
-    border: '1px solid #ddd',
-    borderRadius: '12px',
-    boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
-    backgroundColor: '#fff',
-    maxWidth: '500px',
-    width: '90%',
-    margin: '0 auto'
-  }}>
-    <div style={{ flex: '0 0 70px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-      <img src={img} alt={title} style={{
-        width: '70px',
-        height: '70px',
-        objectFit: 'cover',
-        borderRadius: '8px'
-      }} />
+  <div className="bg-white rounded-xl shadow-md border border-gray-200 p-4 w-full flex items-center gap-6 min-h-[180px]">
+    <div className="w-20 h-20 flex-shrink-0">
+      <img src={img} alt={title} className="w-full h-full object-cover" />
     </div>
-    <div style={{ flex: '1', marginLeft: '20px', maxWidth: '320px' }}>
-      <div style={{ fontSize: '18px', fontWeight: '600', color: 'green', marginBottom: '8px' }}>{title}</div>
-      <p style={{ fontSize: '13px', color: '#555', textAlign: 'justify', lineHeight: '1.4' }}>{description}</p>
+    <div className="flex-1">
+      <h2 className="text-lg font-semibold text-green-600 mb-1">{title}</h2>
+      <p className="text-sm text-gray-700 text-justify leading-snug">{description}</p>
     </div>
   </div>
 );
@@ -49,14 +31,8 @@ const Content = () => {
 
   const openOverlay = () => setShowOverlay(true);
   const closeOverlay = () => setShowOverlay(false);
-
-  const handleProductClick = (product) => {
-    setSelectedProduct(product);
-  };
-
-  const closeProductModal = () => {
-    setSelectedProduct(null);
-  };
+  const handleProductClick = (product) => setSelectedProduct(product);
+  const closeProductModal = () => setSelectedProduct(null);
 
   const productList = [
     { img: c6, title: "Cashew Nuts", description: "Cashew kernels are nutrient-rich, kidney-shaped seeds from the tropical cashew tree, valued for both their taste and health benefits." },
@@ -71,11 +47,10 @@ const Content = () => {
 
   return (
     <div>
-      {/* Who We Are Section */}
-      <div className='section-style'>
-        <div className='flex-container'>
-          <div className='text-style'>
-            <h1 className='heading-style'>Who We Are</h1>
+      <section className="w-11/12 md:w-4/5 mx-auto my-20 p-6 md:p-8">
+        <div className="flex items-center gap-8 flex-wrap md:flex-nowrap">
+          <div className="flex-1 text-base leading-relaxed text-gray-800">
+            <h1 className="text-3xl md:text-4xl mb-4 text-gray-800 font-bold">Who We Are</h1>
             <p>
               Castor Care Ghana Ltd is a company focused on changing the agriculture sector.
               We have evolved into a growing enterprise dedicated to transforming lives and landscapes.
@@ -83,133 +58,94 @@ const Content = () => {
               We also train smallholder farmers in financial literacy and good agricultural practices.
               We’re proud to have expanded our portfolio to include trading in other commodities including Cashew, Tiger Nuts and Ginger.
             </p>
-            <Link to="/about" className='more'>Read More <span>→</span></Link>
+            <Link to="/about" className="mt-4 inline-block text-green-600 border-2 border-green-500 px-4 py-2 text-base font-medium hover:bg-green-500 hover:text-white transition">
+              Read More →
+            </Link>
           </div>
-          <img src={t5} alt="about" className='img-style' />
+          <img src={t5} alt="about" className="flex-1 w-full md:max-w-[50%] h-[300px] md:h-[400px] object-cover rounded mt-6 md:mt-0" />
         </div>
-      </div>
+      </section>
 
-      {/* What We Offer Section */}
-      <div className='section-style'>
-        <div className='flex-container'>
-          <img src={s1} alt="offer" className='img-style' />
-          <div className='text-style'>
-            <h1 className='heading-style'>What We Offer</h1>
+      <section className="w-11/12 md:w-4/5 mx-auto my-20 p-6 md:p-8">
+        <div className="flex items-center gap-8 flex-wrap md:flex-nowrap">
+          <img src={s1} alt="offer" className="flex-1 w-full md:max-w-[50%] h-[300px] md:h-[400px] object-cover rounded mb-6 md:mb-0" />
+          <div className="flex-1 text-base leading-relaxed text-gray-800">
+            <h1 className="text-3xl md:text-4xl mb-4 text-gray-800 font-bold">What We Offer</h1>
             <p>
               Castor Care Ghana is a digital platform aimed at changing the food industry by connecting producers, traders and consumers worldwide.
               We promote sustainable food production, trade and consumption through:
             </p>
-            <ul className='list-style'>
+            <ul className="list-disc pl-5">
               <li>Supply chain optimization using data analytics and AI-driven insights</li>
               <li>Quality control and assurance through standardized processes and certifications</li>
               <li>Payment processing and financing solutions for buyers and sellers</li>
             </ul>
-            <Link to="/service" className='more'>Read More <span>→</span></Link>
+            <Link to="/service" className="mt-4 inline-block text-green-600 border-2 border-green-500 px-4 py-2 text-base font-medium hover:bg-green-500 hover:text-white transition">
+              Read More →
+            </Link>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Our Target Market Section */}
-      <div className='target-container' style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '20px', padding: '20px', margin: '100px 0' }}>
-        <div className='target' style={{ width: '40%', padding: '10px 55px', borderRight: '2px solid #90ee90', minWidth: '300px' }}>
-          <h4>Our Target Market</h4>
-          <h2 style={{ color: 'green' }}> We are committed to working with key stakeholders across the agricultural value chain, including:</h2>
-          <ul>
+      <section className="w-11/12 md:w-4/5 mx-auto my-20 grid grid-cols-1 md:grid-cols-2 gap-10">
+        <div className="border-r-2 border-green-300 pr-6">
+          <h4 className="text-lg font-semibold">Our Target Market</h4>
+          <h2 className="text-xl font-bold text-green-700 mt-2">We are committed to working with key stakeholders across the agricultural value chain, including:</h2>
+          <ul className="list-disc pl-5 mt-4">
             <li>Farmers and farmer cooperatives</li>
             <li>Food processors and manufacturers</li>
             <li>Local and international buyers</li>
             <li>Regulatory bodies and certification agencies</li>
           </ul>
         </div>
-        <div className='target' style={{ width: '40%', padding: '10px 55px', borderLeft: '2px solid #90ee90' }}>
-          <p>At Castor Care Ghana our mission is to revolutionize the agricultural landscape by providing cutting-edge technology solutions that optimize the farm-to-table supply chain.</p>
-          <div className='founder-container' onClick={openOverlay} style={{ display: 'flex', alignItems: 'center', gap: '20px', cursor: 'pointer', marginTop: '20px' }}>
-            <img className='founder-style' style={{ width: '100px', height: '100px', borderRadius: '50%' }} src={founder} alt="founder" />
-            <div className='founder-text' style={{ lineHeight: '0.8' }}>
-              <h3>Kwaku Anim-Asiedu</h3>
-              <p style={{ color: 'green' }}>Founder & CEO of Castor Care Ghana</p>
+        <div className="border-l-2 border-green-300 pl-6">
+          <p className="text-gray-700">At Castor Care Ghana our mission is to revolutionize the agricultural landscape by providing cutting-edge technology solutions that optimize the farm-to-table supply chain.</p>
+          <div onClick={openOverlay} className="flex items-center gap-6 mt-6 cursor-pointer">
+            <img src={founder} alt="founder" className="w-24 h-24 rounded-full object-cover" />
+            <div>
+              <h3 className="text-lg font-bold">Kwaku Anim-Asiedu</h3>
+              <p className="text-green-600">Founder & CEO of Castor Care Ghana</p>
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Founder Overlay */}
       {showOverlay && (
-        <div className="overlay" onClick={closeOverlay} style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(0, 0, 0, 0.6)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 999 }}>
-          <div className="founder-popup" onClick={(e) => e.stopPropagation()} style={{ background: '#fff', padding: '30px', borderRadius: '12px', marginTop: '12%', maxWidth: '1000px', maxHeight: '90vh', width: '100%', boxShadow: '0 8px 16px rgba(0,0,0,0.3)', position: 'relative' }}>
-            <button onClick={closeOverlay} style={{ position: 'absolute', top: '10px', right: '15px', background: 'transparent', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: '#999' }}>&times;</button>
-            <div className="founder-header" style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: '40px', marginBottom: '40px', padding: '20px', textAlign: 'left' }}>
-              <div style={{ flex: '1 1 400px', maxWidth: '600px' }}>
-                <h2 style={{ fontSize: '2rem', marginBottom: '10px', color: '#2e7d32' }}>About Kwaku Anim-Asiedu</h2>
-                <h5 style={{ fontSize: '1.2rem', marginBottom: '15px', fontWeight: '500', color: '#555' }}>Founder & CEO of Castor Care Ghana</h5>
-                <p style={{ lineHeight: '1.8', fontSize: '1.05rem', color: '#333' }}>
+        <div onClick={closeOverlay} className="fixed top-0 left-0 w-full h-full bg-black/95 bg-opacity-70 flex items-center justify-center z-[999]">
+          <div onClick={(e) => e.stopPropagation()} className="bg-white p-6 md:p-10 rounded-xl max-w-5xl max-h-[90vh] w-full shadow-2xl overflow-y-auto relative">
+            <button onClick={closeOverlay} className="absolute top-4 right-6 text-2xl text-gray-400 hover:text-gray-600">&times;</button>
+            <div className="flex flex-wrap gap-8 justify-center items-center">
+              <div className="flex-1 max-w-xl">
+                <h2 className="text-2xl font-bold text-green-700 mb-2">About Kwaku Anim-Asiedu</h2>
+                <h5 className="text-lg font-medium text-gray-600 mb-4">Founder & CEO of Castor Care Ghana</h5>
+                <p className="text-base leading-relaxed text-gray-700">
                   Kwaku Anim-Asiedu is the visionary behind Castor Care Ghana. With a passion for sustainable agriculture and rural development, he has empowered thousands of Ghanaian farmers through access to quality inputs, training, and technology. His dedication to empowering communities and promoting sustainable practices has positioned Castor Care Ghana as a leading force in the agricultural sector.
                 </p>
               </div>
-              <img src={h3} alt="Kwaku Anim-Asiedu" style={{ flex: '1 1 300px', width: '100%', maxWidth: '500px', height: '500px', objectFit: 'cover', borderRadius: '12px', boxShadow: '0 6px 18px rgba(0,0,0,0.1)' }} />
+              <img src={h3} alt="Kwaku Anim-Asiedu" className="flex-1 max-w-md w-full h-[500px] object-cover rounded-lg shadow-lg" />
             </div>
           </div>
         </div>
       )}
 
-      {/* Product Section */}
-      <div style={{ padding: '40px' }}>
-        <h1 style={{ textAlign: 'center', fontSize: '28px', color: '#333', marginBottom: '40px' }}> Commodities Traded</h1>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-          gap: '40px',
-          justifyItems: 'center'
-        }}>
+      <section className="py-20">
+        <h1 className="text-center text-2xl text-gray-800 mb-10">Commodities Traded</h1>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 px-6 md:px-8">
           {productList.map((product, index) => (
-            <div key={index} onClick={() => handleProductClick(product)} style={{ cursor: 'pointer' }}>
+            <div key={index} onClick={() => handleProductClick(product)} className="cursor-pointer">
               <ProductCard img={product.img} title={product.title} description={product.description} />
             </div>
           ))}
         </div>
-      </div>
+      </section>
 
-      {/* Product Modal */}
       {selectedProduct && (
-        <div onClick={closeProductModal} style={{
-          position: 'fixed',
-          top: 0, left: 0, width: '100vw', height: '100vh',
-          backgroundColor: 'rgba(0, 0, 0, 0.7)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 1000
-        }}>
-          <div onClick={(e) => e.stopPropagation()} style={{
-            background: '#fff',
-            padding: '30px',
-            borderRadius: '12px',
-            maxWidth: '30%',
-            maxHeight: '85%',
-            overflowY: 'auto',
-            boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
-            position: 'relative'
-          }}>
-            <button onClick={closeProductModal} style={{
-              position: 'absolute',
-              top: '15px',
-              right: '25px',
-              fontSize: '1.5rem',
-              background: 'transparent',
-              border: 'none',
-              color: '#555',
-              cursor: 'pointer'
-            }}>&times;</button>
-            <img src={selectedProduct.img} alt={selectedProduct.title} style={{
-              width: '100%',
-              maxHeight: '400px',
-              objectFit: 'cover',
-              borderRadius: '12px',
-              marginBottom: '20px'
-            }} />
-            
-            <h2 style={{ color: 'green' }}>{selectedProduct.title}</h2>
-            <p style={{ fontSize: '1rem', color: '#333', lineHeight: '1.6' }}>{selectedProduct.description}</p>
+        <div onClick={closeProductModal} className="fixed top-0 left-0 w-full h-full bg-black/95 bg-opacity-70 flex items-center justify-center z-[1000]">
+          <div onClick={(e) => e.stopPropagation()} className="bg-white p-6 rounded-xl max-w-lg max-h-[85%] overflow-y-auto shadow-2xl relative">
+            <button onClick={closeProductModal} className="absolute top-3 right-4 text-2xl text-gray-500 hover:text-gray-700">&times;</button>
+            <img src={selectedProduct.img} alt={selectedProduct.title} className="w-full max-h-[400px] object-cover rounded mb-5" />
+            <h2 className="text-green-600 text-xl font-semibold mb-2">{selectedProduct.title}</h2>
+            <p className="text-gray-700 leading-relaxed">{selectedProduct.description}</p>
           </div>
         </div>
       )}

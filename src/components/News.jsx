@@ -96,9 +96,8 @@ const News = () => {
     { item: "Tigernut", price: 280 },
   ];
 
-  // Date and season logic
   const today = new Date();
-  const formattedDate = today.toLocaleDateString("en-GB").replaceAll("/", "-"); // dd-mm-yyyy
+  const formattedDate = today.toLocaleDateString("en-GB").replaceAll("/", "-");
   const month = today.getMonth() + 1;
 
   let currentSeason = "";
@@ -113,87 +112,29 @@ const News = () => {
   }
 
   return (
-    <div
-      style={{
-        maxWidth: "1200px",
-        margin: "0 auto",
-        fontFamily: "Arial, sans-serif",
-      }}
-    >
-      {/* Weather Section */}
-      <section
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "flex-start",
-          gap: "50px",
-          padding: "5px",
-          width: "100%",
-        }}
-      >
-        <div style={{ width: "30%", maxWidth: "360px" }}>
-          <div
-            style={{
-              boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-              border: "1px solid #d9c9b5",
-              borderRadius: "12px",
-              padding: "24px",
-              backgroundColor: "#fff",
-              maxWidth: "280px",
-              height: "auto",
-              margin: "0 auto 40px",
-            }}
-          >
-            <h3
-              style={{
-                textAlign: "center",
-                fontSize: "20px",
-                fontWeight: "bold",
-                color: "#5b4636",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                gap: "8px",
-              }}
-            >
+    <div className="max-w-[1200px] mx-auto font-sans">
+      <section className="flex flex-col lg:flex-row gap-12 p-4">
+        {/* Weather & Market Table */}
+        <div className="w-full lg:w-1/3 space-y-10">
+          <div className="shadow-md border border-[#d9c9b5] rounded-xl p-6 bg-white max-w-sm mx-auto">
+            <h3 className="text-center text-xl font-bold text-[#5b4636] flex justify-center items-center gap-2">
               {getWeatherEmoji(weather?.weather?.[0]?.main)} Weather in {weather?.name || location}
             </h3>
-
             {editing ? (
               <form
                 onSubmit={handleSubmit}
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  gap: "8px",
-                  marginTop: "12px",
-                  marginBottom: "20px",
-                }}
+                className="flex justify-center items-center gap-2 mt-3 mb-5"
               >
                 <input
                   type="text"
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
                   placeholder="Enter city"
-                  style={{
-                    padding: "6px 12px",
-                    borderRadius: "6px",
-                    border: "1px solid #c4b49a",
-                    width: "65%",
-                    outline: "none",
-                  }}
+                  className="px-3 py-2 rounded-md border border-[#c4b49a] w-2/3 outline-none"
                 />
                 <button
                   type="submit"
-                  style={{
-                    backgroundColor: "#a1866f",
-                    color: "#fff",
-                    padding: "6px 12px",
-                    border: "none",
-                    borderRadius: "6px",
-                    cursor: "pointer",
-                  }}
+                  className="bg-[#a1866f] text-white px-3 py-2 rounded-md"
                 >
                   Update
                 </button>
@@ -201,115 +142,57 @@ const News = () => {
             ) : (
               <p
                 onClick={() => setEditing(true)}
-                style={{
-                  textAlign: "center",
-                  fontSize: "14px",
-                  color: "#8b6f47",
-                  textDecoration: "underline",
-                  cursor: "pointer",
-                  marginTop: "8px",
-                  marginBottom: "20px",
-                }}
+                className="text-center text-sm text-[#8b6f47] underline cursor-pointer my-2"
               >
                 Change Location
               </p>
             )}
 
             {loading ? (
-              <p style={{ textAlign: "center", color: "#666" }}>
-                Loading weather...
-              </p>
+              <p className="text-center text-gray-600">Loading weather...</p>
             ) : error ? (
-              <p style={{ color: "red", textAlign: "center" }}>⚠️ {error}</p>
+              <p className="text-red-500 text-center">⚠️ {error}</p>
             ) : (
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  backgroundColor: "#fdf6e3",
-                  borderRadius: "10px",
-                  padding: "5px 10px",
-                }}
-              >
-                <div style={{ textAlign: "center" }}>
-                  <div style={{ fontSize: "20px", fontWeight: "bold", color: "#8b6f47" }}>
+              <div className="flex justify-between items-center bg-[#fdf6e3] rounded-lg px-4 py-2">
+                <div className="text-center">
+                  <div className="text-xl font-bold text-[#8b6f47]">
                     {Math.round(weather.main?.temp)}°C
                   </div>
-                  <div
-                    style={{
-                      fontSize: "10px",
-                      color: "#5b4636",
-                      textTransform: "capitalize",
-                      marginTop: "4px",
-                    }}
-                  >
+                  <div className="text-xs text-[#5b4636] capitalize mt-1">
                     {weather.weather?.[0]?.description}
                   </div>
                 </div>
                 <img
                   src={`https://openweathermap.org/img/wn/${weather.weather?.[0]?.icon}@2x.png`}
                   alt="weather icon"
-                  style={{ width: "70px", objectFit: "cover", zIndex: 1 }}
+                  className="w-[70px] object-cover"
                 />
-                <div style={{ fontSize: "12px", textAlign: "right", color: "#5b4636" }}>
-                  <p>
-                    <strong>Day:</strong> {Math.round(weather.main?.temp_max)}°
-                  </p>
-                  <p>
-                    <strong>Night:</strong> {Math.round(weather.main?.temp_min)}°
-                  </p>
-                  <p style={{ fontSize: "10px", color: "#7a5c39", marginTop: "4px" }}>
-                    💨 {weather.wind?.speed} m/s
-                  </p>
+                <div className="text-xs text-right text-[#5b4636]">
+                  <p><strong>Day:</strong> {Math.round(weather.main?.temp_max)}°</p>
+                  <p><strong>Night:</strong> {Math.round(weather.main?.temp_min)}°</p>
+                  <p className="text-[10px] text-[#7a5c39] mt-1">💨 {weather.wind?.speed} m/s</p>
                 </div>
               </div>
             )}
           </div>
 
-          <div
-            style={{
-              boxShadow: "0 1px 4px rgba(0,0,0,0.1)",
-              border: "1px solid #ddd",
-              borderRadius: "12px",
-              padding: "24px",
-              backgroundColor: "#fff",
-              width: "100%",
-            }}
-          >
-            <h2
-              style={{
-                fontSize: "24px",
-                fontWeight: "bold",
-                color: "#1e3a8a",
-                borderBottom: "1px solid #e5e7eb",
-                paddingBottom: "8px",
-              }}
-            >
-              📊 Market Overview
-            </h2>
-            <div style={{ overflowX: "auto" }}>
-              <table
-                style={{
-                  width: "100%",
-                  fontSize: "14px",
-                  borderCollapse: "collapse",
-                  marginTop: "12px",
-                }}
-              >
-                <thead style={{ backgroundColor: "#dbeafe", color: "#1e3a8a", fontWeight: "bold" }}>
+          <div className="shadow-md border border-gray-200 rounded-xl p-6 bg-white w-full">
+            <h2 className="text-xl font-bold text-blue-900 border-b border-gray-200 pb-2">📊 Market Overview</h2>
+            <div className="overflow-x-auto mt-3">
+              <table className="w-full text-sm border-collapse">
+                <thead className="bg-blue-100 text-blue-900 font-bold">
                   <tr>
-                    <th style={{ padding: "8px" }}>PRODUCT</th>
-                    <th style={{ padding: "8px" }}>TYPE</th>
-                    <th style={{ padding: "8px" }}>SEASON</th>
+                    <th className="px-3 py-2">PRODUCT</th>
+                    <th className="px-3 py-2">TYPE</th>
+                    <th className="px-3 py-2">SEASON</th>
                   </tr>
                 </thead>
                 <tbody>
                   {market.map((row, i) => (
-                    <tr key={i} style={{ borderTop: "1px solid #e5e7eb" }}>
-                      <td style={{ padding: "8px", fontWeight: "500" }}>{row.item}</td>
-                      <td style={{ padding: "8px" }}>{row.type}</td>
-                      <td style={{ padding: "8px" }}>{row.season}</td>
+                    <tr key={i} className="border-t border-gray-200">
+                      <td className="px-3 py-2 font-medium">{row.item}</td>
+                      <td className="px-3 py-2">{row.type}</td>
+                      <td className="px-3 py-2">{row.season}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -318,44 +201,25 @@ const News = () => {
           </div>
         </div>
 
-        <div
-          style={{
-            marginTop: "50px",
-            boxShadow: "0 1px 4px rgba(0,0,0,0.1)",
-            border: "1px solid #ddd",
-            borderRadius: "12px",
-            padding: "60px 24px",
-            backgroundColor: "#fff",
-            width: "65%",
-            height: "300px",
-            marginLeft: "40px",
-          }}
-        >
-          <h3
-            style={{ fontSize: "20px", fontWeight: "600", color: "#1e3a8a", marginBottom: "16px" }}
-          >
-            📈 Commodity Prices
-          </h3>
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={marketBar}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="item" />
-              <YAxis unit="₵" />
-              <Tooltip />
-              <Bar dataKey="price" fill="#4caf50" radius={[10, 10, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
+        {/* Chart */}
+        <div className="w-full lg:w-2/3 mt-20 ">
+        <div className="shadow-md border border-gray-200 rounded-xl p-8 bg-white">
+          <h3 className="text-xl font-semibold text-blue-900 mb-4">📈 Commodity Prices</h3>
+          <div className="h-[300px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={marketBar}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="item" />
+                <YAxis unit="₵" />
+                <Tooltip />
+                <Bar dataKey="price" fill="#4caf50" radius={[10, 10, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+          </div>
 
-          <div
-            style={{
-              marginTop: "40px",
-              textAlign: "center",
-              fontSize: "18px",
-              color: "#5b4636",
-              fontWeight: "600",
-            }}
-          >
-            Current Season: <span style={{ fontWeight: "bold" }}>{currentSeason}</span><br />
+          <div className="mt-10 text-center text-lg text-[#5b4636] font-semibold">
+            Current Season: <span className="font-bold">{currentSeason}</span><br />
             Today: <span>{formattedDate}</span>
           </div>
         </div>

@@ -55,7 +55,7 @@ const SignUp = () => {
         setErrorMsg(data.message || 'Failed to sign up');
       } else {
         resetForm();
-        navigate('/welcome'); // 👈 Redirect path after successful signup
+        navigate('/welcome');
       }
     } catch (err) {
       setErrorMsg('Network error, please try again.');
@@ -66,10 +66,11 @@ const SignUp = () => {
 
   const inputStyle = {
     width: '100%',
-    padding: '8px',
-    borderRadius: '5px',
+    padding: '6px',
+    borderRadius: '4px',
     border: '1px solid #ccc',
     boxSizing: 'border-box',
+    fontSize: '14px',
   };
 
   const passwordFieldStyle = {
@@ -79,36 +80,36 @@ const SignUp = () => {
 
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', backgroundColor: '#f0f2f5', padding: '10px' }}>
-      <div style={{ width: '100%', maxWidth: '400px', backgroundColor: '#fff', padding: '25px', borderRadius: '10px', boxShadow: '0 8px 20px rgba(0,0,0,0.1)' }}>
-        <h2 style={{ textAlign: 'center', marginBottom: '16px', color: '#333', fontSize: '22px' }}>Sign Up</h2>
-        
+      <div style={{ width: '100%', maxWidth: '400px', backgroundColor: '#fff', padding: '20px', borderRadius: '10px', boxShadow: '0 8px 20px rgba(0,0,0,0.1)' }}>
+        <h2 style={{ textAlign: 'center', marginBottom: '14px', color: '#333', fontSize: '20px' }}>Sign Up</h2>
+
         {!isSubmitted && (
           <form onSubmit={handleSignUp}>
-            <div style={{ marginBottom: '12px' }}>
-              <label>Select Role</label>
+            <div style={{ marginBottom: '10px' }}>
+              <label style={{ fontSize: '14px' }}>Select Role</label>
               <select value={role} onChange={(e) => setRole(e.target.value)} style={inputStyle}>
                 <option value="user">Buyer</option>
                 <option value="farmer">Farmer</option>
               </select>
             </div>
 
-            <div style={{ marginBottom: '12px' }}>
-              <label>First Name</label>
+            <div style={{ marginBottom: '10px' }}>
+              <label style={{ fontSize: '14px' }}>First Name</label>
               <input type="text" value={name} onChange={(e) => setName(e.target.value)} required style={inputStyle} />
             </div>
 
-            <div style={{ marginBottom: '12px' }}>
-              <label>Last Name</label>
+            <div style={{ marginBottom: '10px' }}>
+              <label style={{ fontSize: '14px' }}>Last Name</label>
               <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} required style={inputStyle} />
             </div>
 
-            <div style={{ marginBottom: '12px' }}>
-              <label>Email</label>
+            <div style={{ marginBottom: '10px' }}>
+              <label style={{ fontSize: '14px' }}>Email</label>
               <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required style={inputStyle} />
             </div>
 
-            <div style={{ marginBottom: '12px', position: 'relative' }}>
-              <label>Password</label>
+            <div style={{ marginBottom: '10px', position: 'relative' }}>
+              <label style={{ fontSize: '14px' }}>Password</label>
               <input
                 type={showPassword ? 'text' : 'password'}
                 value={password}
@@ -116,13 +117,13 @@ const SignUp = () => {
                 required
                 style={passwordFieldStyle}
               />
-              <span onClick={togglePassword} style={{ position: 'absolute', top: '35px', right: '10px', cursor: 'pointer', color: '#555' }}>
+              <span onClick={togglePassword} style={{ position: 'absolute', top: '30px', right: '10px', cursor: 'pointer', color: '#555' }}>
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </span>
             </div>
 
-            <div style={{ marginBottom: '12px', position: 'relative' }}>
-              <label>Confirm Password</label>
+            <div style={{ marginBottom: '10px', position: 'relative' }}>
+              <label style={{ fontSize: '14px' }}>Confirm Password</label>
               <input
                 type={showConfirm ? 'text' : 'password'}
                 value={confirmPassword}
@@ -130,21 +131,23 @@ const SignUp = () => {
                 required
                 style={passwordFieldStyle}
               />
-              <span onClick={toggleConfirm} style={{ position: 'absolute', top: '35px', right: '10px', cursor: 'pointer', color: '#555' }}>
+              <span onClick={toggleConfirm} style={{ position: 'absolute', top: '30px', right: '10px', cursor: 'pointer', color: '#555' }}>
                 {showConfirm ? <FaEyeSlash /> : <FaEye />}
               </span>
             </div>
 
-            {errorMsg && <p style={{ color: 'red', fontSize: '14px', textAlign: 'center' }}>{errorMsg}</p>}
+            {errorMsg && <p style={{ color: 'red', fontSize: '13px', textAlign: 'center' }}>{errorMsg}</p>}
 
-            <p style={{ fontSize: '12px', color: '#555', textAlign: 'left' }}><input type="checkbox" required style={{ marginRight: '5px',  }} /> By signing up, you agree to our terms of service and privacy policy.</p>
+            <p style={{ fontSize: '12px', color: '#555', textAlign: 'left' }}>
+              <input type="checkbox" required style={{ marginRight: '5px' }} /> I agree to the terms and conditions
+            </p>
 
             <button
               type="submit"
               disabled={loading}
               style={{
                 width: '100%',
-                padding: '10px',
+                padding: '8px',
                 backgroundColor: '#28a745',
                 color: '#fff',
                 fontWeight: 'bold',
@@ -152,6 +155,7 @@ const SignUp = () => {
                 border: 'none',
                 cursor: loading ? 'not-allowed' : 'pointer',
                 marginTop: '8px',
+                fontSize: '15px',
               }}
             >
               {loading ? 'Signing up...' : 'Sign Up'}
@@ -160,7 +164,7 @@ const SignUp = () => {
         )}
 
         {!isSubmitted && (
-          <p style={{ marginTop: '12px', fontSize: '13px', textAlign: 'center' }}>
+          <p style={{ marginTop: '10px', fontSize: '13px', textAlign: 'center' }}>
             Already have an account?{' '}
             <Link to="/signin" style={{ color: '#28a745', fontWeight: 'bold' }}>
               Sign in

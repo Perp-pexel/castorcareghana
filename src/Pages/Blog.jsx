@@ -8,18 +8,17 @@ const Blog = () => {
   return (
     <div>
       <Nav />
-      <div className="blog-header" style={{ textAlign: "left",display: "flex", flexDirection: "column", justifyContent: "left", marginLeft: "60%", marginTop: "10%" }}>
-        <h1 style={{ fontSize: "2.5rem", color: "#333"}}>
-        Castor EcoLearn Hub</h1>
-        <p style={{ color: '#555', fontSize: '1.2rem' }}>Stay updated with our latest news, stories, and insights.</p>
+      <div className="flex flex-col justify-start items-start mt-[10%] ml-[60%] text-left">
+        <h1 className="text-4xl text-gray-800 font-bold">Castor EcoLearn Hub</h1>
+        <p className="text-gray-600 text-lg mt-2">Stay updated with our latest news, stories, and insights.</p>
       </div>
       <News />
       <Benefit />
       <Media />
 
-      <footer className="footer">© 2025 Castor Care Ghana. All rights reserved.</footer>
+      <footer className="text-center py-4 text-sm text-gray-500">© 2025 Castor Care Ghana. All rights reserved.</footer>
     </div>
   )
 }
 
-export default Blog
+export default Blog;
