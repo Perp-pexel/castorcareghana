@@ -187,59 +187,36 @@ const ProductGrid = () => {
       </div>
 
       {selectedProduct && (
-        <div
-          style={{
-            position: 'fixed',
-            top: '0', left: '0', right: '0', bottom: '0',
-            backgroundColor: 'rgba(0,0,0,0.6)',
-            display: 'flex', justifyContent: 'center', alignItems: 'center',
-            zIndex: 999,
-          }}
-        >
-          <div
-            style={{
-              marginTop: '7%',
-              background: '#fff',
-              padding: '30px',
-              borderRadius: '10px',
-              width: '300px',
-              position: 'relative',
-            }}
-          >
+        <div className="fixed inset-0 bg-black/75 bg-opacity-60 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded-lg w-80 relative">
             <button
               onClick={() => setSelectedProduct(null)}
-              style={{
-                position: 'absolute',
-                top: '10px', right: '15px',
-                background: 'none', border: 'none',
-                fontSize: '1.2rem', cursor: 'pointer',
-              }}
-            >
-              ✕
-            </button>
-            <h2>{selectedProduct.name}</h2>
+              className="absolute top-2 right-3 text-lg"
+            >✕</button>
+            <div className=" items-center mb-2">
+              <h2 className="text-lg font-bold">{selectedProduct.name}</h2>
+            </div>
             <img
               src={selectedProduct.image}
               alt={selectedProduct.name}
-              style={{
-                width: '100%', height: '150px',
-                objectFit: 'cover', borderRadius: '8px',
-              }}
+              className="w-full h-50 object-cover rounded"
             />
-            <div style={{ marginTop: '15px' }}>
-              <label>Quantity:</label>
+            
+            <div className="mt-4">
+              <p className="text-sm mt-2 text-right">{currencySymbols[currency]}{convertPrice(selectedProduct.price.kg).toFixed(2)} / kg</p>
+              <label className="block mb-1">Quantity:</label>
               <input
                 type="number"
                 min="1"
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
-                style={{ width: '100%', padding: '8px', margin: '8px 0' }}
+                className="w-full p-2 border rounded mb-2"
               />
-              <label>Unit:</label>
+              <label className="block mb-1">Unit:</label>
               <select
                 value={unit}
                 onChange={(e) => setUnit(e.target.value)}
-                style={{ width: '100%', padding: '8px', marginBottom: '15px' }}
+                className="w-full p-2 border rounded mb-4"
               >
                 <option value="kg">kg</option>
                 <option value="bag">bag</option>
@@ -247,30 +224,15 @@ const ProductGrid = () => {
                 <option value="liter">liter</option>
                 <option value="milliliters">ml</option>
               </select>
-              <p>
-                <strong>Total Price:</strong> {currencySymbols[currency]}
-                {totalPrice.toFixed(2)}
-              </p>
+              <p className="font-semibold">Total: {currencySymbols[currency]}{totalPrice.toFixed(2)}</p>
               <button
                 onClick={handlePayment}
-                style={{
-                  width: '100%',
-                  padding: '10px 20px',
-                  background: '#28a745',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '5px',
-                  fontSize: '16px',
-                  cursor: 'pointer',
-                }}
-              >
-                Confirm Order & Pay
-              </button>
+                className="mt-3 w-full bg-green-600 text-white py-2 rounded hover:bg-green-700"
+              >Confirm Order & Pay</button>
             </div>
           </div>
         </div>
       )}
-
       {showPayment && (
         <div
           style={{

@@ -111,7 +111,7 @@ const Content = () => {
       </section>
 
       {showOverlay && (
-        <div onClick={closeOverlay} className="fixed top-0 left-0 w-full h-full bg-black/95 bg-opacity-70 flex items-center justify-center z-[999]">
+        <div onClick={closeOverlay} className="fixed top-0 left-0 w-full h-full bg-black/75 bg-opacity-70 flex items-center justify-center z-[999]">
           <div onClick={(e) => e.stopPropagation()} className="bg-white p-6 md:p-10 rounded-xl max-w-5xl max-h-[90vh] w-full shadow-2xl overflow-y-auto relative">
             <button onClick={closeOverlay} className="absolute top-4 right-6 text-2xl text-gray-400 hover:text-gray-600">&times;</button>
             <div className="flex flex-wrap gap-8 justify-center items-center">

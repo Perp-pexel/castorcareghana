@@ -217,7 +217,7 @@ const ProductGrid = () => {
       </div>
 
       {selectedProduct && (
-        <div className="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50">
+        <div className="fixed inset-0 bg-black/75 bg-opacity-60 flex justify-center items-center z-50">
           <div className="bg-white p-6 rounded-lg w-80 relative">
             <button
               onClick={() => setSelectedProduct(null)}
@@ -265,7 +265,7 @@ const ProductGrid = () => {
       )}
 
       {showPayment && (
-        <div className="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50">
+        <div className="fixed inset-0 bg-black/75 bg-opacity-70 flex justify-center items-center z-50">
           <div className="relative w-4/5 h-[95vh] bg-white rounded overflow-hidden">
             <button
               onClick={() => setShowPayment(false)}
