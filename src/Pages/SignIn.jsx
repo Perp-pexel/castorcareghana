@@ -1,40 +1,84 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import { apiLogin, getUserData } from '../services/auth';
+import { useAuth } from '../components/dashboard/contexts/AuthContext';
 
 const SignIn = () => {
-  const [role, setRole] = useState('user');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [errorMsg, setErrorMsg] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { setUser } = useAuth();
 
-  const handleLogin = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setErrorMsg('');
+
+    const formData = new FormData(e.target);
+    const email = formData.get("email");
+    const password = formData.get("password");
 
     try {
-      const res = await fetch('https://castorcareghanabackend.onrender.com/api/auth/signin', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ role, email, password }),
+
+      const loginRes = await apiLogin({ email, password });
+      const { accessToken } = loginRes.data;
+
+      if (!accessToken) {
+        throw new Error("Access token missing");
+      }
+
+
+      localStorage.setItem("token", accessToken);
+
+
+      const profileRes = await getUserData();
+      const user = profileRes.data;
+
+      if (!user || !user.role) {
+        throw new Error("User profile missing role");
+      }
+
+
+      localStorage.setItem("user", JSON.stringify(user));
+      setUser(user);
+
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Login Successful',
+        text: `Welcome back, ${user.firstName || 'User'}!`,
+        timer: 2000,
+        showConfirmButton: false
       });
 
-      const data = await res.json();
 
-      if (!res.ok) {
-        setErrorMsg(data.message || 'Failed to login');
+      if (user.role === 'admin') {
+        navigate('/dashboard/admin');
+      } else if (user.role === 'farmer') {
+        navigate('/dashboard/farmer');
+      } else if (user.role === 'buyer' || user.role === 'user') {
+        navigate('/dashboard/buyer');
       } else {
-        localStorage.setItem('token', data.token);
-        navigate(`/${role}-dashboard`);
+        navigate('/');
       }
-    } catch (err) {
-      setErrorMsg('Network error, please try again.');
+
+    } catch (error) {
+      console.error("Login failed:", error);
+
+      let msg = "Login failed. Please try again.";
+      if (error.response?.status === 401) msg = "Invalid credentials.";
+      if (error.response?.status === 404) msg = "User not found.";
+      if (error.response?.data?.message) msg = error.response.data.message;
+
+      Swal.fire({
+        icon: 'error',
+        title: 'Login Failed',
+        text: msg,
+      });
     } finally {
       setLoading(false);
     }
   };
+
 
   return (
     <div
@@ -59,80 +103,46 @@ const SignIn = () => {
       >
         <h2 style={{ textAlign: 'center', marginBottom: '20px', color: '#333' }}>Sign In</h2>
 
-        <form onSubmit={handleLogin}>
-          {/* <div style={{ marginBottom: '15px' }}>
-            <label
-              htmlFor="role"
-              style={{ display: 'block', marginBottom: '6px', color: '#555' }}
-            >
-              Select Role
-            </label>
-            <select
-              id="role"
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '10px',
-                borderRadius: '5px',
-                border: '1px solid #ccc',
-              }}
-            >
-              <option value="user">User</option>
-              <option value="farmer">Farmer</option>
-              <option value="admin">Admin</option>
-            </select>
-          </div> */}
-
+        <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: '15px' }}>
-            <label
-              htmlFor="email"
-              style={{ display: 'block', marginBottom: '6px', color: '#555' }}
-            >
+            <label htmlFor="email" style={{ display: 'block', marginBottom: '6px', color: '#555' }}>
               Email
             </label>
             <input
               id="email"
+              name="email"
               type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              placeholder="name@example.com"
               required
               style={{
                 width: '100%',
                 padding: '10px',
                 borderRadius: '5px',
                 border: '1px solid #ccc',
+                boxSizing: 'border-box',
               }}
             />
           </div>
 
           <div style={{ marginBottom: '20px' }}>
-            <label
-              htmlFor="password"
-              style={{ display: 'block', marginBottom: '6px', color: '#555' }}
-            >
+            <label htmlFor="password" style={{ display: 'block', marginBottom: '6px', color: '#555' }}>
               Password
             </label>
             <input
               id="password"
+              name="password"
               type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter your password"
               required
               style={{
                 width: '100%',
                 padding: '10px',
                 borderRadius: '5px',
                 border: '1px solid #ccc',
+                boxSizing: 'border-box',
               }}
             />
           </div>
-
-          {errorMsg && (
-            <p style={{ color: 'red', marginBottom: '15px', textAlign: 'center' }}>
-              {errorMsg}
-            </p>
-          )}
 
           <button
             type="submit"
@@ -140,28 +150,22 @@ const SignIn = () => {
             style={{
               width: '100%',
               padding: '12px',
-              backgroundColor: '#28a745',
+              backgroundColor: loading ? '#6c757d' : '#28a745',
               color: '#fff',
               fontWeight: 'bold',
               borderRadius: '5px',
               border: 'none',
               cursor: loading ? 'not-allowed' : 'pointer',
+              transition: 'background-color 0.2s ease',
             }}
           >
-            {loading ? 'Logging in...' : 'Login'}
+            {loading ? 'Logging in...' : 'Sign in'}
           </button>
         </form>
 
-        <p
-          style={{
-            marginTop: '15px',
-            textAlign: 'center',
-            fontSize: '14px',
-            color: '#555',
-          }}
-        >
+        <p style={{ marginTop: '15px', textAlign: 'center', fontSize: '14px', color: '#555' }}>
           Don't have an account?{' '}
-          <Link to="/signup" style={{ color: '#28a745', fontWeight: 'bold' }}>
+          <Link to="/signup" style={{ color: '#28a745', fontWeight: 'bold', textDecoration: 'none' }}>
             Sign up
           </Link>
         </p>
