@@ -8,7 +8,7 @@ const rolePermissions = [
     actions: [
       'createUser', 'updateUser', 'getUser', 'getUsers',
       'getProduct', 'getProducts', 'getEducation', 'getEducations',
-      'createReview', 'updateReview', 'deleteReview', 'getReview', 'getReviews'
+      'createReview', 'updateReview', 'deleteReview', 'getReview', 'getReviews','trackOrders'
     ]
   },
   {
@@ -16,7 +16,7 @@ const rolePermissions = [
     actions: [
       'createUser', 'updateUser', 'getUser', 'getUsers',
       'getProduct', 'getProducts', 'getEducation', 'getEducations',
-      'createReview', 'updateReview', 'deleteReview', 'getReview', 'getReviews'
+      'createReview', 'updateReview', 'deleteReview', 'getReview', 'getReviews', 'trackOrders'
     ]
   },
   {

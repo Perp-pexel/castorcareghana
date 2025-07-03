@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Sidebar from '../components/dashboard/components/Sidebar';
 import Header from '../components/dashboard/components/Header';
 import { Outlet } from 'react-router-dom';
+import CartSidebar from '../components/dashboard/user/CartSidebar';
 
 const DashboardLayout = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -22,6 +23,7 @@ const DashboardLayout = () => {
         <main className="flex-1 p-6 overflow-y-auto">
           <Outlet />
         </main>
+        <CartSidebar/>
       </div>
     </div>
   );

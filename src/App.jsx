@@ -32,6 +32,8 @@ import UserEducationView from './components/dashboard/user/UserEducationView ';
 import FarmerEducationManagement from './components/dashboard/farmer/FarmerEducationManagement';
 import DashboardRedirect from './components/dashboard/DashboardRedirects';
 import FarmerReviews from './components/dashboard/farmer/FarmerReviews';
+import UserOrderTracking from './components/dashboard/user/UserOrderTracking';
+import { CartProvider } from './components/dashboard/contexts/CartContext';
 
 const router = createBrowserRouter([
   {
@@ -77,6 +79,7 @@ const router = createBrowserRouter([
     { path: 'buyer/products', element: <UserProductView /> },
     { path: 'buyer/education', element: <UserEducationView /> },
     { path: 'buyer/reviews', element: <UserReviewManagement /> },
+    { path: 'buyer/order-tracking', element: <UserOrderTracking /> },
   ],
 }
 
@@ -85,8 +88,10 @@ const router = createBrowserRouter([
 
 const App = () => {
   return (
-    <AuthProvider>
-      <RouterProvider router={router} />
+   <AuthProvider>
+      <CartProvider>
+        <RouterProvider router={router} />
+      </CartProvider>
     </AuthProvider>
   );
 };

@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   Home, Users, Package, BookOpen, Star,
-  LogOut, User, Sprout, Settings
+  LogOut, User, Sprout, Settings, ClipboardList
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -31,6 +31,7 @@ const Sidebar = () => {
       { id: 'products', label: 'Available Products', icon: Package, permission: 'getProducts' },
       { id: 'education', label: 'Learn', icon: BookOpen, permission: 'getEducations' },
       { id: 'reviews', label: 'My Reviews', icon: Star, permission: 'getReviews' },
+      { id: 'order-tracking', label: 'My Orders', icon: ClipboardList, permission: 'trackOrders' },
     ]
   };
 
