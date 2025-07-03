@@ -8,7 +8,7 @@ const rolePermissions = [
     actions: [
       'createUser', 'updateUser', 'getUser', 'getUsers',
       'getProduct', 'getProducts', 'getEducation', 'getEducations',
-      'createReview', 'updateReview', 'deleteReview', 'getReview', 'getReviews'
+      'createReview', 'updateReview', 'deleteReview', 'getReview', 'getReviews','trackOrders'
     ]
   },
   {
@@ -16,7 +16,7 @@ const rolePermissions = [
     actions: [
       'createUser', 'updateUser', 'getUser', 'getUsers',
       'getProduct', 'getProducts', 'getEducation', 'getEducations',
-      'createReview', 'updateReview', 'deleteReview', 'getReview', 'getReviews'
+      'createReview', 'updateReview', 'deleteReview', 'getReview', 'getReviews', 'trackOrders'
     ]
   },
   {
@@ -43,7 +43,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  rt
+  
   useEffect(() => {
     const initializeAuth = () => {
       try {
