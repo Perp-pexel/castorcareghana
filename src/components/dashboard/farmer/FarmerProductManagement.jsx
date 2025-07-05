@@ -1,103 +1,43 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { 
-  Plus, 
-  Search, 
-  Filter, 
-  Edit, 
-  Trash2, 
-  Eye, 
-  Package,
-  DollarSign,
-  TrendingUp,
-  AlertTriangle,
-  X
+  Plus, Search, Filter, Edit, Trash2, Eye, Package, DollarSign, TrendingUp,
+  AlertTriangle, X
 } from 'lucide-react';
+import { apiGetFarmerProducts } from '../../../services/products';
+import { AuthContext } from '../contexts/AuthContext';
 
 function FarmerProductManagement() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [showAddModal, setShowAddModal] = useState(false);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  const products = [
-    {
-      id: 1,
-      name: 'Organic Tomatoes',
-      category: 'Vegetables',
-      price: 4.99,
-      stock: 150,
-      status: 'active',
-      image: 'https://images.pexels.com/photos/533280/pexels-photo-533280.jpeg?auto=compress&cs=tinysrgb&w=400',
-      sales: 89,
-      revenue: 445.11,
-      rating: 4.8,
-      description: 'Fresh organic tomatoes grown without pesticides'
-    },
-    {
-      id: 2,
-      name: 'Fresh Lettuce',
-      category: 'Vegetables',
-      price: 2.49,
-      stock: 8,
-      status: 'low_stock',
-      image: 'https://images.pexels.com/photos/1656663/pexels-photo-1656663.jpeg?auto=compress&cs=tinysrgb&w=400',
-      sales: 45,
-      revenue: 112.05,
-      rating: 4.6,
-      description: 'Crisp and fresh lettuce perfect for salads'
-    },
-    {
-      id: 3,
-      name: 'Organic Carrots',
-      category: 'Vegetables',
-      price: 3.29,
-      stock: 0,
-      status: 'out_of_stock',
-      image: 'https://images.pexels.com/photos/143133/pexels-photo-143133.jpeg?auto=compress&cs=tinysrgb&w=400',
-      sales: 67,
-      revenue: 220.43,
-      rating: 4.9,
-      description: 'Sweet and crunchy organic carrots'
-    },
-    {
-      id: 4,
-      name: 'Bell Peppers',
-      category: 'Vegetables',
-      price: 5.99,
-      stock: 75,
-      status: 'active',
-      image: 'https://images.pexels.com/photos/594137/pexels-photo-594137.jpeg?auto=compress&cs=tinysrgb&w=400',
-      sales: 34,
-      revenue: 203.66,
-      rating: 4.7,
-      description: 'Colorful bell peppers in red, yellow, and green'
-    },
-    {
-      id: 5,
-      name: 'Fresh Spinach',
-      category: 'Leafy Greens',
-      price: 3.99,
-      stock: 42,
-      status: 'active',
-      image: 'https://images.pexels.com/photos/2325843/pexels-photo-2325843.jpeg?auto=compress&cs=tinysrgb&w=400',
-      sales: 28,
-      revenue: 111.72,
-      rating: 4.5,
-      description: 'Nutrient-rich fresh spinach leaves'
-    },
-    {
-      id: 6,
-      name: 'Organic Potatoes',
-      category: 'Vegetables',
-      price: 2.99,
-      stock: 120,
-      status: 'active',
-      image: 'https://images.pexels.com/photos/144248/potatoes-vegetables-erdfrucht-bio-144248.jpeg?auto=compress&cs=tinysrgb&w=400',
-      sales: 156,
-      revenue: 466.44,
-      rating: 4.4,
-      description: 'Versatile organic potatoes for all cooking needs'
-    }
-  ];
+ 
+  const { user } = useContext(AuthContext);
+  const farmerId = user?.id;
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        setError('');
+        if (!farmerId) {
+          setProducts([]);
+          setError('No farmer ID found.');
+          return;
+        }
+        const res = await apiGetFarmerProducts(farmerId);
+        setProducts(Array.isArray(res.data) ? res.data : []);
+      } catch (err) {
+        setError('Failed to load products.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (farmerId) fetchProducts();
+  }, [farmerId]);
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -126,8 +66,8 @@ function FarmerProductManagement() {
   };
 
   const filteredProducts = products.filter(product => {
-    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         product.category.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = product.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         product.category?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesFilter = filterStatus === 'all' || product.status === filterStatus;
     return matchesSearch && matchesFilter;
   });
@@ -135,7 +75,7 @@ function FarmerProductManagement() {
   const totalProducts = products.length;
   const activeProducts = products.filter(p => p.status === 'active').length;
   const lowStockProducts = products.filter(p => p.status === 'low_stock').length;
-  const totalRevenue = products.reduce((sum, p) => sum + p.revenue, 0);
+  const totalRevenue = products.reduce((sum, p) => sum + (p.revenue || 0), 0);
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
@@ -224,81 +164,87 @@ function FarmerProductManagement() {
       </div>
 
       {/* Products Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredProducts.map((product) => (
-          <div key={product.id} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
-            <div className="relative">
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-full h-48 object-cover"
-              />
-              <div className="absolute top-4 right-4">
-                <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(product.status)}`}>
-                  {getStatusText(product.status)}
-                </span>
-              </div>
-            </div>
-            
-            <div className="p-6">
-              <div className="flex items-start justify-between mb-2">
-                <h3 className="text-lg font-semibold text-gray-900">{product.name}</h3>
-                <div className="flex items-center space-x-1">
-                  <div className="flex">
-                    {[...Array(5)].map((_, i) => (
-                      <svg
-                        key={i}
-                        className={`h-4 w-4 ${i < Math.floor(product.rating) ? 'text-yellow-400' : 'text-gray-300'}`}
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                      </svg>
-                    ))}
-                  </div>
-                  <span className="text-sm text-gray-500">({product.rating})</span>
-                </div>
-              </div>
-              
-              <p className="text-sm text-gray-600 mb-3">{product.category}</p>
-              <p className="text-sm text-gray-700 mb-4">{product.description}</p>
-              
-              <div className="flex items-center justify-between mb-4">
-                <div className="text-2xl font-bold text-primary-600">${product.price}</div>
-                <div className="text-sm text-gray-600">
-                  Stock: <span className={`font-medium ${product.stock < 10 ? 'text-red-600' : 'text-green-600'}`}>
-                    {product.stock}
+      {loading ? (
+        <div className="text-center py-12 text-gray-500">Loading products...</div>
+      ) : error ? (
+        <div className="text-center py-12 text-red-500">{error}</div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredProducts.map((product) => (
+            <div key={product.id || product._id} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
+              <div className="relative">
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="w-full h-48 object-cover"
+                />
+                <div className="absolute top-4 right-4">
+                  <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(product.status)}`}>
+                    {getStatusText(product.status)}
                   </span>
                 </div>
               </div>
               
-              <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
-                <div>
-                  <span className="text-gray-600">Sales:</span>
-                  <span className="font-medium ml-1">{product.sales}</span>
+              <div className="p-6">
+                <div className="flex items-start justify-between mb-2">
+                  <h3 className="text-lg font-semibold text-gray-900">{product.name}</h3>
+                  <div className="flex items-center space-x-1">
+                    <div className="flex">
+                      {[...Array(5)].map((_, i) => (
+                        <svg
+                          key={i}
+                          className={`h-4 w-4 ${i < Math.floor(product.rating || 0) ? 'text-yellow-400' : 'text-gray-300'}`}
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                      ))}
+                    </div>
+                    <span className="text-sm text-gray-500">({product.rating})</span>
+                  </div>
                 </div>
-                <div>
-                  <span className="text-gray-600">Revenue:</span>
-                  <span className="font-medium ml-1">${product.revenue}</span>
+                
+                <p className="text-sm text-gray-600 mb-3">{product.category}</p>
+                <p className="text-sm text-gray-700 mb-4">{product.description}</p>
+                
+                <div className="flex items-center justify-between mb-4">
+                  <div className="text-2xl font-bold text-primary-600">${product.price}</div>
+                  <div className="text-sm text-gray-600">
+                    Stock: <span className={`font-medium ${product.stock < 10 ? 'text-red-600' : 'text-green-600'}`}>
+                      {product.stock}
+                    </span>
+                  </div>
                 </div>
-              </div>
-              
-              <div className="flex space-x-2">
-                <button className="flex-1 flex items-center justify-center px-3 py-2 text-sm bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors">
-                  <Edit className="h-4 w-4 mr-1" />
-                  Edit
-                </button>
-                <button className="flex items-center justify-center px-3 py-2 text-sm border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
-                  <Eye className="h-4 w-4" />
-                </button>
-                <button className="flex items-center justify-center px-3 py-2 text-sm border border-red-300 text-red-700 rounded-lg hover:bg-red-50 transition-colors">
-                  <Trash2 className="h-4 w-4" />
-                </button>
+                
+                <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
+                  <div>
+                    <span className="text-gray-600">Sales:</span>
+                    <span className="font-medium ml-1">{product.sales}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-600">Revenue:</span>
+                    <span className="font-medium ml-1">${product.revenue}</span>
+                  </div>
+                </div>
+                
+                <div className="flex space-x-2">
+                  <button className="flex-1 flex items-center justify-center px-3 py-2 text-sm bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors">
+                    <Edit className="h-4 w-4 mr-1" />
+                    Edit
+                  </button>
+                  <button className="flex items-center justify-center px-3 py-2 text-sm border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                    <Eye className="h-4 w-4" />
+                  </button>
+                  <button className="flex items-center justify-center px-3 py-2 text-sm border border-red-300 text-red-700 rounded-lg hover:bg-red-50 transition-colors">
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       {/* Add Product Modal */}
       {showAddModal && (
