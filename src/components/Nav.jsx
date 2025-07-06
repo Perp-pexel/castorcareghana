@@ -33,7 +33,7 @@ const Nav = () => {
 
   return (
     <div>
-      <header className="fixed top-0 left-0 right-0 z-50 bg-gray-100 shadow-md flex items-center h-[70px] px-5">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-gray-100 shadow-md flex items-center h-[70px] px-2">
         <div className="logo">
           <img src={logo2} alt="Logo" className="w-[39%] h-[39%] object-cover ml-3" />
         </div>

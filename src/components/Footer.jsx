@@ -47,9 +47,9 @@ const Footer = () => {
           </ul>
           <p className="mt-4">Follow us on</p>
           <div className="flex gap-4 mt-2 text-lg">
-            <a href="https://www.facebook.com/profile.php?id=61573519845973" target="_blank" rel="noopener noreferrer" className="hover:text-green-500"><FaFacebook /></a>
+            <a href="https://www.facebook.com/share/19i8YXU3w4/" target="_blank" rel="noopener noreferrer" className="hover:text-green-500"><FaFacebook /></a>
             <a href="https://www.instagram.com/castorcareghana?igsh=MWlydHZhanB0MGkyZg%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer" className="hover:text-green-500"><FaInstagram /></a>
-            <a href="https://www.linkedin.com/company/castor-care-ghana" target="_blank" rel="noopener noreferrer" className="hover:text-green-500"><FaLinkedin /></a>
+            <a href="https://www.linkedin.com/company/castor-care-ghana-ltd" target="_blank" rel="noopener noreferrer" className="hover:text-green-500"><FaLinkedin /></a>
             <a href="https://www.tiktok.com/@castorcareghana?is_from_webapp=1&sender_device=pc" target="_blank" rel="noopener noreferrer" className="hover:text-green-500"><FaTiktok /></a>
           </div>
         </div>

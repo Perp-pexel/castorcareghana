@@ -11,6 +11,7 @@ import Blog from './Pages/Blog';
 import Contact from './Pages/Contact';
 import SignIn from './Pages/SignIn';
 import SignUp from './Pages/SignUp';
+import ResetPassword from './Pages/ResetPassword';
 
 // Dashboard
 import DashboardLayout from './layout/DashboardLayout';
@@ -35,6 +36,8 @@ import FarmerReviews from './components/dashboard/farmer/FarmerReviews';
 import UserOrderTracking from './components/dashboard/user/UserOrderTracking';
 import { CartProvider } from './components/dashboard/contexts/CartContext';
 
+
+
 const router = createBrowserRouter([
   {
     path: '/',
@@ -49,12 +52,18 @@ const router = createBrowserRouter([
       { path: 'about', element: <About /> },
       { path: 'service', element: <Service /> },
       { path: 'product', element: <Product /> },
-      { path: 'blog', element: <Blog /> },
-      { path: 'contact', element: <Contact /> },
-      { path: 'signin', element: <SignIn /> },
-      { path: 'signup', element: <SignUp /> },
+      
     ],
   },
+{ path: 'blog', element: <Blog /> },
+{ path: 'contact', element: <Contact /> },
+{ path: 'signin', element: <SignIn /> },
+{ path: 'signup', element: <SignUp /> },
+{ path: "/reset-password/:token", element: <ResetPassword />},
+{ path: '*', element: <h2 style={{ textAlign: 'center', marginTop: '100px', fontSize: '30px' }}>404 - Page Not Found</h2> },
+
+
+
 {
   path: '/dashboard',
   element: <DashboardLayout />,
