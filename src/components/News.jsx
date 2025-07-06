@@ -207,9 +207,10 @@ const News = () => {
           <h3 className="text-xl font-semibold text-blue-900 mb-4">📈 Commodity Prices</h3>
           <div className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={marketBar}>
+              <BarChart data={marketBar}
+              margin={{ top: 10, right: 20, left: 0, bottom: 60 }}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="item" />
+                <XAxis dataKey="item" angle={-45} textAnchor="end" dy={6}  />
                 <YAxis unit="₵" />
                 <Tooltip />
                 <Bar dataKey="price" fill="#4caf50" radius={[10, 10, 0, 0]} />

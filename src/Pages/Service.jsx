@@ -1,8 +1,14 @@
 import React from 'react'
 import ser1 from '../assets/ser1.jpg'
 import ser2 from '../assets/ser2.avif'
-import h1 from '../assets/team/h1.jpg'
-import h2 from '../assets/team/h2.jpg'
+// import h1 from '../assets/team/h1.jpg'
+// import h2 from '../assets/team/h2.jpg'
+import bg5 from '../assets/background/bg5.jpg'
+import srv1 from '../assets/serve/srv1.jpg'
+import srv2 from '../assets/serve/srv2.jpg'
+import srv3 from '../assets/serve/srv3.jpg'
+import srv4 from '../assets/serve/srv4.jpg'
+
 
 const Service = () => {
   return (
@@ -76,46 +82,66 @@ const Service = () => {
       </div>
 
       {/* What We Do Section */}
-      <div className="mx-auto mt-[7%] p-6 bg-gradient-to-br from-green-50 to-white rounded-xl">
-        <h1 className="text-3xl text-green-600 mb-6 font-bold text-center">What We Do</h1>
-        <p className="text-base text-gray-700 leading-relaxed text-center max-w-4xl mx-auto mb-10">
-          At Castor Care Ghana, we leverage technology to transform the agricultural landscape. Our platform
-          connects farmers, traders, and consumers, ensuring a more efficient and transparent food supply chain.
-        </p>
+<div
+  className="mt-[10%] mb-[-3%] p-6 rounded-xl shadow-xl bg-cover bg-no-repeat relative"
+  style={{
+    backgroundImage: `url(${bg5})`,
+    backgroundPosition: '90% center', // pushes background 10% left
+  }}
+>
+  {/* Overlay for better contrast */}
+  <div className="absolute inset-0 bg-white/70 backdrop-blur-sm rounded-xl"></div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 max-w-7xl mx-auto">
-          {[{
-            title: "Empower Farmers",
-            desc: "We empower farmers with access to markets and fair prices.",
-            quote: "Agriculture is our priority.",
-            img: h2
-          }, {
-            title: "Support Traders",
-            desc: "We provide traders with real-time market data and analytics.",
-            quote: "Trade with confidence.",
-            img: h2
-          }, {
-            title: "Serve Consumers",
-            desc: "We ensure consumers receive safe and high-quality food products.",
-            quote: "Your health is our priority.",
-            img: h1
-          }, {
-            title: "Promote Sustainability",
-            desc: "We promote sustainable agricultural practices.",
-            quote: "For a greener future.",
-            img: h1
-          }].map((item, index) => (
-            <div key={index} className="rounded-lg p-6 text-center hover:shadow-xl transition-shadow duration-300">
-              <img src={item.img} alt={item.title} className="w-35 h-30 object-cover rounded-full border-r-[10px] border-green-600 mx-auto mb-4" />
+  {/* Content above overlay */}
+  <div className="relative z-10">
+    <h1 className="text-4xl text-green-700 mb-6 font-extrabold text-center drop-shadow-md">What We Do</h1>
+    <p className="text-lg text-gray-800 leading-relaxed text-center max-w-4xl mx-auto mb-10 font-medium">
+      At Castor Care Ghana, we leverage technology to transform the agricultural landscape. Our platform
+      connects farmers, traders, and consumers, ensuring a more efficient and transparent food supply chain.
+    </p>
+
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 max-w-7xl mx-auto">
+      {[
+        {
+          title: "Empower Farmers",
+          desc: "We empower farmers with access to markets and fair prices.",
+          quote: "Agriculture is our priority.",
+          img: srv2,
+        },
+        {
+          title: "Support Traders",
+          desc: "We provide traders with real-time market data and analytics.",
+          quote: "Trade with confidence.",
+          img: srv3,
+        },
+        {
+          title: "Serve Consumers",
+          desc: "We ensure consumers receive safe and high-quality food products.",
+          quote: "Your health is our priority.",
+          img: srv4,
+        },
+        {
+          title: "Promote Sustainability",
+          desc: "We promote sustainable agricultural practices.",
+          quote: "For a greener future.",
+          img: srv1,
+        },
+      ].map((item, index) => (
+        <div key={index} className="rounded-lg p-6 text-center hover:shadow-xl transition-shadow duration-300">
+              <img src={item.img} alt={item.title} className="w-40 h-30 object-cover  rounded-full border-r-[10px] border-green-600 mx-auto mb-4" />
               <h1 className="text-lg font-bold text-gray-800 mb-2">{item.title}</h1>
               <p className="text-sm text-gray-600 mb-2">{item.desc}</p>
               <p className="text-sm italic text-gray-500">{item.quote}</p>
             </div>
-          ))}
-        </div>
-      </div>
+      ))}
+    </div>
+  </div>
+</div>
+
     </div>
   )
 }
 
 export default Service;
+
+ 

@@ -5,6 +5,7 @@ import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import Swal from 'sweetalert2';
 import { apiSignup } from '../services/auth';
+import bg8 from '../assets/background/bg8.webp'; 
 
 const SignUp = () => {
   const [role, setRole] = useState('');
@@ -21,7 +22,6 @@ const SignUp = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const navigate = useNavigate();
-
   const togglePassword = () => setShowPassword(!showPassword);
   const toggleConfirm = () => setShowConfirm(!showConfirm);
 
@@ -36,9 +36,7 @@ const SignUp = () => {
     setIsSubmitted(true);
   };
 
-  // Function to format phone number for backend
   const formatPhoneForBackend = (phoneNumber) => {
-    // Remove country code and format to local format
     if (phoneNumber.startsWith('233')) {
       return '0' + phoneNumber.substring(3);
     }
@@ -50,74 +48,42 @@ const SignUp = () => {
     setErrorMsg('');
     setIsSubmitted(false);
 
-    if (!role) {
-      setErrorMsg('Please select a role.');
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      setErrorMsg("Passwords don't match!");
-      return;
-    }
-
-    if (!contact) {
-      setErrorMsg('Please enter your contact number.');
-      return;
-    }
+    if (!role) return setErrorMsg('Please select a role.');
+    if (password !== confirmPassword) return setErrorMsg("Passwords don't match!");
+    if (!contact) return setErrorMsg('Please enter your contact number.');
 
     setLoading(true);
     try {
       const payload = {
         firstName,
         lastName,
-        contact: formatPhoneForBackend(contact), // Format phone number
+        contact: formatPhoneForBackend(contact),
         email,
         password,
-        role
+        role,
       };
 
-      console.log('Sending payload:', payload); // Debug log
-
       const response = await apiSignup(payload);
-      console.log('Signup response:', response.data);
-
       if (response.status === 200 || response.status === 201) {
-        // SweetAlert for successful signup
         Swal.fire({
           icon: 'success',
           title: 'Registration Successful',
           text: 'Your account has been created successfully!',
         });
-
         resetForm();
         navigate('/signin');
       }
     } catch (err) {
-      console.error("Signup error:", err);
-      
       let errorMessage = 'Signup failed, please try again.';
-      
-      if (err.response?.status === 422) {
-        // Handle validation errors
-        const validationErrors = err.response?.data?.errors || err.response?.data?.message;
-        if (typeof validationErrors === 'object') {
-          errorMessage = Object.values(validationErrors).flat().join(', ');
-        } else if (typeof validationErrors === 'string') {
-          errorMessage = validationErrors;
+      const resErr = err.response?.data;
+      if (err.response?.status === 422 && resErr) {
+        if (typeof resErr.errors === 'object') {
+          errorMessage = Object.values(resErr.errors).flat().join(', ');
         } else {
-          errorMessage = 'Please check your input and try again.';
+          errorMessage = resErr.message || errorMessage;
         }
-      } else if (err.response?.data?.message) {
-        errorMessage = err.response.data.message;
       }
-
-      // SweetAlert for signup failure
-      Swal.fire({
-        icon: 'error',
-        title: 'Registration Failed',
-        text: errorMessage,
-      });
-
+      Swal.fire({ icon: 'error', title: 'Registration Failed', text: errorMessage });
       setErrorMsg(errorMessage);
     } finally {
       setLoading(false);
@@ -126,10 +92,10 @@ const SignUp = () => {
 
   const inputStyle = {
     width: '100%',
-    padding: '6px',
+    padding: '9px',
+    marginBottom: '9px',
     borderRadius: '4px',
     border: '1px solid #ccc',
-    boxSizing: 'border-box',
     fontSize: '14px',
   };
 
@@ -140,156 +106,116 @@ const SignUp = () => {
 
   return (
     <div style={{
+      backgroundImage: `url(${bg8})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundAttachment: 'fixed',
+      minHeight: '100vh',
+      padding: '10px',
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      minHeight: '100vh',
-      backgroundColor: '#f0f2f5',
-      padding: '10px'
+      height: '400px',
+      marginBottom: '-95px',
     }}>
       <div style={{
+        position: 'relative',
+        marginTop: '60px',
         width: '100%',
         maxWidth: '400px',
-        backgroundColor: '#fff',
-        padding: '20px',
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        padding: '25px',
         borderRadius: '10px',
-        boxShadow: '0 8px 20px rgba(0,0,0,0.1)'
+        boxShadow: '0 8px 20px rgba(0,0,0,0.15)',
       }}>
-        <h2 style={{
-          textAlign: 'center',
-          marginBottom: '14px',
-          color: '#333',
-          fontSize: '20px'
-        }}>Sign Up</h2>
+        {/* Close Button */}
+        <button
+          onClick={() => navigate('/')}
+          style={{
+            position: 'absolute',
+            top: '12px',
+            right: '15px',
+            backgroundColor: 'transparent',
+            border: 'none',
+            fontSize: '20px',
+            fontWeight: 'bold',
+            color: '#999',
+            cursor: 'pointer',
+            borderRadius: '10%',
+            width: '30px',
+            height: '30px',
+            textAlign: 'center',
+            lineHeight: '26px',
+            transition: 'all 0.3s ease',
+          }}
+          onMouseEnter={(e) => {
+    e.target.style.backgroundColor = '#e6f4ea';
+    e.target.style.color = '#28a745';
+  }}
+  onMouseLeave={(e) => {
+    e.target.style.backgroundColor = 'transparent';
+    e.target.style.color = '#888';
+          }}
+          aria-label="Close"
+        >
+          &times;
+        </button>
+
+        <h2 style={{ textAlign: 'center', marginBottom: '12px', color: '#28a745', fontSize: '24px', fontWeight: 'bold' }}>Sign Up</h2>
 
         {!isSubmitted && (
           <form onSubmit={handleSignUp}>
-            <div style={{ marginBottom: '10px' }}>
-              <label style={{ fontSize: '14px' }}>Select Role</label>
-              <select
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
-                required
-                style={inputStyle}
-              >
-                <option value="">-- Select Role --</option>
-                <option value="buyer">Buyer</option>
-                <option value="farmer">Farmer</option>
-                
-              </select>
-            </div>
+            <select value={role} onChange={(e) => setRole(e.target.value)} required style={inputStyle}>
+              <option value="">-- Select Role --</option>
+              <option value="buyer">Buyer</option>
+              <option value="farmer">Farmer</option>
+            </select>
 
-            <div style={{ marginBottom: '10px' }}>
-              <label style={{ fontSize: '14px' }}>First Name</label>
-              <input
-                type="text"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                required
-                style={inputStyle}
-              />
-            </div>
+            <input type="text" placeholder="First Name" value={firstName} onChange={(e) => setFirstName(e.target.value)} required style={inputStyle} />
+            <input type="text" placeholder="Last Name" value={lastName} onChange={(e) => setLastName(e.target.value)} required style={inputStyle} />
 
-            <div style={{ marginBottom: '10px' }}>
-              <label style={{ fontSize: '14px' }}>Last Name</label>
-              <input
-                type="text"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                required
-                style={inputStyle}
-              />
-            </div>
+            <PhoneInput
+              country={'gh'}
+              value={contact}
+              onChange={setContact}
+              inputStyle={{ ...inputStyle, paddingLeft: '50px' }}
+              containerStyle={{ marginBottom: '10px' }}
+              inputProps={{ required: true }}
+            />
 
-            <div style={{ marginBottom: '10px' }}>
-              <label style={{ fontSize: '14px' }}>Contact</label>
-              <PhoneInput
-                country={'gh'}
-                value={contact}
-                onChange={setContact}
-                inputStyle={{ ...inputStyle, paddingLeft: '48px' }}
-                containerStyle={{ width: '100%' }}
-                inputProps={{ required: true }}
-              />
-            </div>
+            <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required style={inputStyle} />
 
-            <div style={{ marginBottom: '10px' }}>
-              <label style={{ fontSize: '14px' }}>Email</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                style={inputStyle}
-              />
-            </div>
-
-            <div style={{ marginBottom: '10px', position: 'relative' }}>
-              <label style={{ fontSize: '14px' }}>Password</label>
-              <input
-                type={showPassword ? 'text' : 'password'}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                style={passwordFieldStyle}
-              />
-              <span onClick={togglePassword} style={{
-                position: 'absolute',
-                top: '30px',
-                right: '10px',
-                cursor: 'pointer',
-                color: '#555'
-              }}>
+            <div style={{ position: 'relative' }}>
+              <input type={showPassword ? 'text' : 'password'} placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required style={passwordFieldStyle} />
+              <span onClick={togglePassword} style={{ position: 'absolute', right: '10px', top: '10px', cursor: 'pointer', color: '#555' }}>
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </span>
             </div>
 
-            <div style={{ marginBottom: '10px', position: 'relative' }}>
-              <label style={{ fontSize: '14px' }}>Confirm Password</label>
-              <input
-                type={showConfirm ? 'text' : 'password'}
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-                style={passwordFieldStyle}
-              />
-              <span onClick={toggleConfirm} style={{
-                position: 'absolute',
-                top: '30px',
-                right: '10px',
-                cursor: 'pointer',
-                color: '#555'
-              }}>
+            <div style={{ position: 'relative' }}>
+              <input type={showConfirm ? 'text' : 'password'} placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required style={passwordFieldStyle} />
+              <span onClick={toggleConfirm} style={{ position: 'absolute', right: '10px', top: '10px', cursor: 'pointer', color: '#555' }}>
                 {showConfirm ? <FaEyeSlash /> : <FaEye />}
               </span>
             </div>
 
-            {errorMsg && <p style={{
-              color: 'red',
-              fontSize: '13px',
-              textAlign: 'center'
-            }}>{errorMsg}</p>}
+            {errorMsg && <p style={{ color: 'red', fontSize: '13px', textAlign: 'center' }}>{errorMsg}</p>}
 
-            <p style={{
-              fontSize: '12px',
-              color: '#555',
-              textAlign: 'left'
-            }}>
-              <input type="checkbox" required style={{ marginRight: '5px' }} /> I agree to the terms and conditions
-            </p>
+            <label style={{ fontSize: '12px', display: 'block', marginBottom: '10px' }}>
+              <input type="checkbox" required style={{ marginRight: '6px' }} />
+              I agree to the terms and conditions
+            </label>
 
             <button type="submit" disabled={loading} style={{
               width: '100%',
-              padding: '8px',
+              padding: '10px',
               backgroundColor: loading ? '#6c757d' : '#28a745',
               color: '#fff',
               fontWeight: 'bold',
-              borderRadius: '5px',
+              borderRadius: '4px',
               border: 'none',
               cursor: loading ? 'not-allowed' : 'pointer',
-              marginTop: '8px',
-              fontSize: '15px',
-              transition: 'background-color 0.2s ease',
+              fontSize: '15px'
             }}>
               {loading ? 'Signing up...' : 'Sign Up'}
             </button>
