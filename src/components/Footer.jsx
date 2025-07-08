@@ -4,7 +4,7 @@ import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaFacebook, FaInstagram, FaLinkedi
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-800 text-white px-5 py-10 mt-24">
+    <footer className="bg-gray-900 text-white px-5 py-10 mt-24">
       <div className="max-w-6xl mx-auto flex flex-wrap justify-between gap-8 text-left">
 
         {/* Logo and Intro */}
@@ -27,7 +27,7 @@ const Footer = () => {
         </div>
 
         {/* Info */}
-        <div className="flex-1 min-w-[150px]">
+        <div className="flex-1 min-w-[100px]">
           <h3 className="mb-5 font-semibold text-lg">Information</h3>
           <ul className="space-y-2">
             <li><a href="/service" className="hover:text-green-500">Service</a></li>
