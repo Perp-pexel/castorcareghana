@@ -16,7 +16,7 @@ export const apiPayForProducts = async ({ product, amount, currency, quantity })
 
 //reviews
 export const apiGetReviews = async (farmerId) => apiClient.get(`/reviews/${farmerId}`);
-
+export const apiGetAllReviews = async () => apiClient.get("/reviews");
 
 
 

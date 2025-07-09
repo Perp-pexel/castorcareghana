@@ -1,123 +1,88 @@
-import React from 'react'
-
-import  { useState } from 'react';
-import { 
-  Star, 
-  Search, 
-  Filter, 
-  Edit, 
-  Trash2, 
+import React, { useEffect, useState } from 'react';
+import {
+  Star,
+  Search,
+  Edit,
+  Trash2,
   Plus,
-  Calendar,
-  Package,
   ThumbsUp,
   MessageCircle,
-  Eye
+  Eye,
 } from 'lucide-react';
+import { apiGetAllReviews } from '../../../services/products';
 
 const UserReviewManagement = () => {
+  const [reviews, setReviews] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [showReviewModal, setShowReviewModal] = useState(false);
-  const [editingReview, setEditingReview] = useState(null);
 
-  const reviews = [
-    {
-      id: 1,
-      productName: 'Organic Tomatoes',
-      productImage: 'https://images.pexels.com/photos/1327838/pexels-photo-1327838.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=2',
-      farmer: 'Green Valley Farm',
-      rating: 5,
-      title: 'Absolutely amazing quality!',
-      content: 'These tomatoes were incredibly fresh and flavorful. You can really taste the difference when they\'re grown organically. Will definitely order again!',
-      date: '2024-01-15',
-      helpful: 12,
-      replies: 2,
-      verified: true,
-      status: 'published'
-    },
-    {
-      id: 2,
-      productName: 'Fresh Lettuce Bundle',
-      productImage: 'https://images.pexels.com/photos/1656663/pexels-photo-1656663.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=2',
-      farmer: 'Sunshine Organics',
-      rating: 4,
-      title: 'Good quality, fast delivery',
-      content: 'The lettuce was crisp and fresh. Packaging was excellent and delivery was faster than expected. Only minor issue was one leaf was slightly wilted.',
-      date: '2024-01-12',
-      helpful: 8,
-      replies: 1,
-      verified: true,
-      status: 'published'
-    },
-    {
-      id: 3,
-      productName: 'Seasonal Fruit Box',
-      productImage: 'https://images.pexels.com/photos/1132047/pexels-photo-1132047.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=2',
-      farmer: 'Orchard Hills',
-      rating: 3,
-      title: 'Mixed experience',
-      content: 'Some fruits were perfectly ripe while others were overripe. The variety was good but quality control could be better.',
-      date: '2024-01-10',
-      helpful: 5,
-      replies: 0,
-      verified: true,
-      status: 'pending'
-    },
-    {
-      id: 4,
-      productName: 'Herb Garden Starter Kit',
-      productImage: 'https://images.pexels.com/photos/1459505/pexels-photo-1459505.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=2',
-      farmer: 'Urban Greens',
-      rating: 5,
-      title: 'Perfect for beginners!',
-      content: 'Everything I needed to start my herb garden. Clear instructions and healthy plants. Already seeing great growth after 2 weeks!',
-      date: '2024-01-08',
-      helpful: 15,
-      replies: 3,
-      verified: true,
-      status: 'published'
-    }
-  ];
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const res = await apiGetAllReviews();
+        const normalized = (res.data || []).map((r) => ({
+          id: r.id,
+          productName: r.productName || '',
+          productImage: r.productImage || '',
+          farmer: r.farmer || '',
+          rating: r.rating || 0,
+          title: r.title || '',
+          content: r.comment || '',
+          date: r.date || '',
+          helpful: r.helpful || 0,
+          replies: r.replies || 0,
+          verified: r.verified || false,
+          status: r.status || 'published',
+        }));
+        setReviews(normalized);
+      } catch (err) {
+        setError('Failed to load reviews');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchReviews();
+  }, []);
 
-  const pendingReviews = [
-    {
-      id: 5,
-      productName: 'Garden Tool Set',
-      productImage: 'https://images.pexels.com/photos/416978/pexels-photo-416978.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=2',
-      farmer: 'Farm Supply Co.',
-      purchaseDate: '2024-01-20',
-      orderNumber: '#ORD-005'
-    }
-  ];
+  const filteredReviews = reviews.filter((review) => {
+    const productName = review.productName || '';
+    const farmer = review.farmer || '';
+    const title = review.title || '';
 
-  const filteredReviews = reviews.filter(review => {
-    const matchesSearch = review.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      review.farmer.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      review.title.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesFilter = selectedFilter === 'all' || 
+    const matchesSearch =
+      productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      farmer.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      title.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesFilter =
+      selectedFilter === 'all' ||
       (selectedFilter === 'published' && review.status === 'published') ||
       (selectedFilter === 'pending' && review.status === 'pending') ||
       (selectedFilter === 'high-rated' && review.rating >= 4) ||
       (selectedFilter === 'low-rated' && review.rating <= 3);
-    
+
     return matchesSearch && matchesFilter;
   });
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'published': return 'bg-green-100 text-green-800';
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'published':
+        return 'bg-green-100 text-green-800';
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
   const ReviewCard = ({ review }) => (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
       <div className="flex items-start gap-4">
-        <img 
-          src={review.productImage} 
+        <img
+          src={review.productImage}
           alt={review.productName}
           className="w-16 h-16 rounded-lg object-cover"
         />
@@ -145,9 +110,9 @@ const UserReviewManagement = () => {
           <div className="flex items-center gap-2 mb-3">
             <div className="flex">
               {[...Array(5)].map((_, i) => (
-                <Star 
-                  key={i} 
-                  className={`w-4 h-4 ${i < review.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} 
+                <Star
+                  key={i}
+                  className={`w-4 h-4 ${i < review.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
                 />
               ))}
             </div>
@@ -183,33 +148,6 @@ const UserReviewManagement = () => {
     </div>
   );
 
-  const PendingReviewCard = ({ item }) => (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
-      <div className="flex items-center gap-4">
-        <img 
-          src={item.productImage} 
-          alt={item.productName}
-          className="w-16 h-16 rounded-lg object-cover"
-        />
-        <div className="flex-1">
-          <h3 className="font-bold text-gray-900 mb-1">{item.productName}</h3>
-          <p className="text-gray-600 text-sm mb-2">by {item.farmer}</p>
-          <div className="flex items-center gap-4 text-sm text-gray-500">
-            <span>Purchased: {item.purchaseDate}</span>
-            <span>Order: {item.orderNumber}</span>
-          </div>
-        </div>
-        <button 
-          onClick={() => setShowReviewModal(true)}
-          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
-        >
-          <Plus className="w-4 h-4" />
-          Write Review
-        </button>
-      </div>
-    </div>
-  );
-
   const ReviewModal = () => (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -219,17 +157,13 @@ const UserReviewManagement = () => {
             <label className="block text-sm font-medium text-gray-700 mb-2">Rating</label>
             <div className="flex gap-1">
               {[...Array(5)].map((_, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  className="text-gray-300 hover:text-yellow-400 transition-colors"
-                >
+                <button key={i} type="button" className="text-gray-300 hover:text-yellow-400 transition-colors">
                   <Star className="w-8 h-8" />
                 </button>
               ))}
             </div>
           </div>
-          
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Review Title</label>
             <input
@@ -268,10 +202,17 @@ const UserReviewManagement = () => {
     </div>
   );
 
+  if (loading) {
+    return <div className="p-10 text-center">Loading reviews...</div>;
+  }
+
+  if (error) {
+    return <div className="p-10 text-center text-red-600">{error}</div>;
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-6xl mx-auto space-y-8">
-        {/* Header */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div>
@@ -290,20 +231,6 @@ const UserReviewManagement = () => {
           </div>
         </div>
 
-        {/* Pending Reviews */}
-        {pendingReviews.length > 0 && (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Pending Reviews</h2>
-            <p className="text-gray-600 mb-6">Share your experience with these recent purchases</p>
-            <div className="space-y-4">
-              {pendingReviews.map((item) => (
-                <PendingReviewCard key={item.id} item={item} />
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Search and Filters */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="relative flex-1">
@@ -330,14 +257,12 @@ const UserReviewManagement = () => {
           </div>
         </div>
 
-        {/* Reviews List */}
         <div className="space-y-4">
           {filteredReviews.map((review) => (
             <ReviewCard key={review.id} review={review} />
           ))}
         </div>
 
-        {/* Empty State */}
         {filteredReviews.length === 0 && (
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
             <Star className="w-16 h-16 text-gray-300 mx-auto mb-4" />
@@ -346,7 +271,6 @@ const UserReviewManagement = () => {
           </div>
         )}
 
-        {/* Review Modal */}
         {showReviewModal && <ReviewModal />}
       </div>
     </div>

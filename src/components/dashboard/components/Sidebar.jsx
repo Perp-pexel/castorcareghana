@@ -29,7 +29,7 @@ const Sidebar = () => {
     buyer: [
       { id: 'dashboard', label: 'Dashboard', icon: Home },
       { id: 'products', label: 'Available Products', icon: Package, permission: 'getProducts' },
-      { id: 'education', label: 'Learn', icon: BookOpen, permission: 'getEducations' },
+      // { id: 'education', label: 'Learn', icon: BookOpen, permission: 'getEducations' },
       { id: 'reviews', label: 'My Reviews', icon: Star, permission: 'getReviews' },
       { id: 'order-tracking', label: 'My Orders', icon: ClipboardList, permission: 'trackOrders' },
     ]
