@@ -1,61 +1,99 @@
-import React, { useState } from 'react';
-import { apiPayForProducts } from '../../../services/products';
+import React, { useEffect, useState } from 'react';
+
+const PAYAZA_PUBLIC_KEY = "PZ78-PKLIVE-DDA9F9B0-6ACC-4045-B689-D0A0842D1876"; // Use test key for dev
 
 const CheckoutForm = ({ total, items, onSuccess }) => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
+  useEffect(() => {
+    if (!window.PayazaCheckout) {
+      console.error("PayazaCheckout not loaded.");
+    }
+  }, []);
+
+  const handleSubmit = (e) => {
     e.preventDefault();
+    if (!window.PayazaCheckout) {
+      alert('Payaza payment library not loaded. Please try again later.');
+      return;
+    }
+
     setLoading(true);
 
-    try {
-     
-      const item = items[0];
+    const transactionRef = "TRX-" + Date.now();
 
-      const response = await apiPayForProducts({
-        product: item.id, // or item.product
-        amount: item.price,
-        currency: 'GHS',
-        quantity: item.quantity,
-        email,
-      });
+    const payazaCheckout = PayazaCheckout.setup({
+      merchant_key: PAYAZA_PUBLIC_KEY,
+      connection_mode: "Live", // Use "Test" if needed
+      checkout_amount: total,
+      currency_code: "GHS",
+      email_address: email,
+      first_name: 'Customer',
+      last_name: 'Checkout',
+      phone_number: "0000000000", // Optional
+      transaction_reference: transactionRef,
+      virtual_account_configuration: { expires_in_minutes: 15 },
+      additional_details: {
+        note: "Castor Care Order"
+      }
+    });
 
-      // Redirect to payment URL
-      if (response.checkout_url || response.redirect_url) {
-        window.location.href = response.checkout_url || response.redirect_url;
+    payazaCheckout.setCallback((response) => {
+      if (response.status === "successful") {
+        // Save to localStorage
+        const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+        const newOrder = {
+          id: transactionRef,
+          date: new Date().toISOString().split("T")[0],
+          status: 'processing',
+          total,
+          items,
+          timeline: [
+            { status: 'Order Placed', date: new Date().toLocaleString(), completed: true },
+            { status: 'Order Confirmed', date: 'Pending', completed: false },
+            { status: 'Preparing for Shipment', date: 'Pending', completed: false },
+            { status: 'Out for Delivery', date: 'Pending', completed: false },
+            { status: 'Delivered', date: 'Pending', completed: false }
+          ]
+        };
+        orders.unshift(newOrder);
+        localStorage.setItem('orders', JSON.stringify(orders));
+
+        onSuccess(); // Clears cart
       } else {
-        alert("Couldn't get payment link");
+        alert("Payment failed or cancelled.");
       }
 
-      onSuccess?.();
-    } catch (error) {
-      console.error('Checkout Error:', error);
-      alert('Payment failed. Please try again.');
-    } finally {
       setLoading(false);
-    }
+    });
+
+    payazaCheckout.setOnClose(() => {
+      setLoading(false);
+    });
+
+    payazaCheckout.showPopup();
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div>
-        <label>Email Address</label>
+        <label className="block mb-1 font-medium">Email Address</label>
         <input
           type="email"
           required
           value={email}
           onChange={e => setEmail(e.target.value)}
-          className="mt-1 block w-full border rounded"
+          className="w-full border px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-green-500"
         />
       </div>
 
       <button
         type="submit"
         disabled={loading}
-        className="w-full bg-green-600 text-white py-3 rounded"
+        className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded"
       >
-        {loading ? 'Processing...' : `Pay GH₵${total.toFixed(2)}`}
+        {loading ? 'Processing Payment...' : `Pay GH₵${total.toFixed(2)}`}
       </button>
     </form>
   );
