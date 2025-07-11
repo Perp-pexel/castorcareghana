@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { getUserData } from '.././../../services/auth';
 
 export const AuthContext = createContext();
 
@@ -8,11 +9,11 @@ const rolePermissions = [
     actions: [
       'createUser', 'updateUser', 'getUser', 'getUsers',
       'getProduct', 'getProducts', 'getEducation', 'getEducations',
-      'createReview', 'updateReview', 'deleteReview', 'getReview', 'getReviews','trackOrders'
+      'createReview', 'updateReview', 'deleteReview', 'getReview', 'getReviews', 'trackOrders'
     ]
   },
   {
-    role: 'user', 
+    role: 'user',
     actions: [
       'createUser', 'updateUser', 'getUser', 'getUsers',
       'getProduct', 'getProducts', 'getEducation', 'getEducations',
@@ -43,13 +44,12 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  
   useEffect(() => {
     const initializeAuth = () => {
       try {
         const token = localStorage.getItem('token');
         const storedUser = localStorage.getItem('user');
-        
+
         if (token && storedUser) {
           const userData = JSON.parse(storedUser);
           setUser(userData);
@@ -57,7 +57,6 @@ export const AuthProvider = ({ children }) => {
         }
       } catch (error) {
         console.error('Error initializing auth:', error);
-        
         localStorage.removeItem('token');
         localStorage.removeItem('user');
       } finally {
@@ -73,36 +72,42 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     console.log('User logged out');
-    ge
     window.location.href = '/signin';
   };
 
- const hasPermission = (action) => {
-  if (!user || !user.role) return false;
-  const roleKey = user.role.toLowerCase();
-  const permissions = rolePermissions.find(p => p.role === roleKey);
-  return permissions ? permissions.actions.includes(action) : false;
-};
-
-
-  const isAuthenticated = () => {
-    return !!user && !!localStorage.getItem('token');
+  const hasPermission = (action) => {
+    if (!user || !user.role) return false;
+    const roleKey = user.role.toLowerCase();
+    const permissions = rolePermissions.find(p => p.role === roleKey);
+    return permissions ? permissions.actions.includes(action) : false;
   };
 
-  const getUserRole = () => {
-    return user?.role || null;
-  };
+  const isAuthenticated = () => !!user && !!localStorage.getItem('token');
 
-  const getUserInfo = () => {
-    return user ? {
-      id: user.id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      role: user.role,
-      contact: user.contact,
-      fullName: `${user.firstName} ${user.lastName}`
-    } : null;
+  const getUserRole = () => user?.role || null;
+
+  const getUserInfo = () =>
+    user
+      ? {
+          id: user.id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          role: user.role,
+          contact: user.contact,
+          fullName: `${user.firstName} ${user.lastName}`
+        }
+      : null;
+
+  // ✅ Refresh the user after update
+  const refreshUser = async () => {
+    try {
+      const res = await getUserData(); // expects token to be sent via headers
+      setUser(res.data);
+      localStorage.setItem('user', JSON.stringify(res.data));
+    } catch (error) {
+      console.error('Failed to refresh user:', error);
+    }
   };
 
   const value = {
@@ -113,6 +118,7 @@ export const AuthProvider = ({ children }) => {
     isAuthenticated,
     getUserRole,
     getUserInfo,
+    refreshUser, // ✅ included in context
     loading
   };
 
