@@ -28,7 +28,6 @@ const UserProductView = () => {
         const response = await apiGetAllProducts();
         const data = response.data;
 
-        // Assuming API returns [{ title, description, price, image }]
         setProducts(data);
       } catch (error) {
         console.error('Failed to fetch products:', error);
@@ -40,7 +39,7 @@ const UserProductView = () => {
 
   const filteredProducts = products.filter(product => {
     const matchesSearch = product.title?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'all'; // Adjust if you later add category filtering
+    const matchesCategory = selectedCategory === 'all'; 
     const matchesPrice = product.price >= priceRange[0] && product.price <= priceRange[1];
     return matchesSearch && matchesCategory && matchesPrice;
   });

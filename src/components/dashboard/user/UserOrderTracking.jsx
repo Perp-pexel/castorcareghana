@@ -97,7 +97,8 @@ const UserOrderTracking = () => {
         <div className="p-6">
           <h4 className="font-medium text-gray-900 mb-4">Order Timeline</h4>
           <div className="space-y-4">
-            {order.timeline.map((step, index) => (
+            {(order.timeline || []).map((step, index) => (
+
               <div key={index} className="flex items-start gap-4">
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step.completed ? 'bg-green-600' : 'bg-gray-300'}`}>
                   {step.completed ? (
