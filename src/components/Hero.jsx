@@ -45,11 +45,9 @@ const Hero = () => {
         height: '90vh',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center',
         overflow: 'hidden',
         width: '100%',
         objectFit: 'cover',
-        objectPosition: 'center',
         justifyContent: 'center'
       }}>
         <img
@@ -152,7 +150,7 @@ const Hero = () => {
         <p className="hero-subtitle" style={{ fontSize: '1.5rem', marginBottom: '50px' }}>
           Transforming Agriculture, Changing Lives
         </p>
-        <Link to="/product" className="navlink" style={{
+        <Link to="/education" className="navlink" style={{
           padding: '10px 20px',
           backgroundColor: '#28a745',
           color: '#fff',
@@ -167,8 +165,7 @@ const Hero = () => {
           justifyContent: 'center',
           zIndex: '1',
           position: 'relative'
-        }}>
-          Order Now <span>→</span>
+        }}>Get Educated<span>→</span>
         </Link>
       </div>
     </div>

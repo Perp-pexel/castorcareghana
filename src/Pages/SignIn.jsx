@@ -5,6 +5,7 @@ import { apiLogin, getUserData } from '../services/auth';
 import { useAuth } from '../components/dashboard/contexts/AuthContext';
 import bg4 from '../assets/background/bg4.webp';
 import bg9 from '../assets/background/bg9.jpg';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const SignIn = () => {
   const [loading, setLoading] = useState(false);
@@ -14,6 +15,7 @@ const SignIn = () => {
   const [forgotEmail, setForgotEmail] = useState('');
   const [showForgotForm, setShowForgotForm] = useState(false);
   const [forgotLoading, setForgotLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
   const { setUser } = useAuth();
@@ -183,14 +185,30 @@ const SignIn = () => {
               required
               style={inputStyle}
             />
+            <div style={{ position: 'relative' }}>
             <input
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
               style={inputStyle}
-            />
+             />
+            
+              <span
+                onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  position: 'absolute',
+                  right: '10px',
+                  top: '20px',
+                  color: '#555',
+                  cursor: 'pointer',
+                }}
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </span>
+            </div>
+           
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
               <label>
                 <input

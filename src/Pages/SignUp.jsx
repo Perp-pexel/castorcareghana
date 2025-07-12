@@ -187,14 +187,14 @@ const SignUp = () => {
 
             <div style={{ position: 'relative' }}>
               <input type={showPassword ? 'text' : 'password'} placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required style={passwordFieldStyle} />
-              <span onClick={togglePassword} style={{ position: 'absolute', right: '10px', top: '10px', cursor: 'pointer', color: '#555' }}>
+              <span onClick={togglePassword} style={{ position: 'absolute', right: '10px', top: '15px', cursor: 'pointer', color: '#555' }}>
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </span>
             </div>
 
             <div style={{ position: 'relative' }}>
               <input type={showConfirm ? 'text' : 'password'} placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required style={passwordFieldStyle} />
-              <span onClick={toggleConfirm} style={{ position: 'absolute', right: '10px', top: '10px', cursor: 'pointer', color: '#555' }}>
+              <span onClick={toggleConfirm} style={{ position: 'absolute', right: '10px', top: '15px', cursor: 'pointer', color: '#555' }}>
                 {showConfirm ? <FaEyeSlash /> : <FaEye />}
               </span>
             </div>
