@@ -1,24 +1,24 @@
 import React, { useState } from "react";
 import f1 from "../assets/f1.jpg";
 import f2 from "../assets/f2.jpg";
-
 const blogPosts = [
   {
     type: "image",
     title: "Training Session with Local Farmers",
-    src: "/media/farmer-training.jpg",
-    description: "Empowering local farmers with modern techniques and financial literacy.",
+    src: "public/blog/h5.webp",
+    description: "Transforming communities through agriculture training.",
+    
   },
   {
     type: "video",
     title: "Castor Care Impact Story",
-    src: "/media/impact-video.mp4",
-    description: "Watch how Castor Care is transforming communities through agriculture.",
+    src: "public/blog/vm1.mp4",
+    description: "Empowering local farmers with modern techniques and financial literacy.",
   },
   {
     type: "image",
     title: "Warehouse Expansion Project",
-    src: "/media/warehouse.jpg",
+    src: "public/blog/w1.jpg",
     description: "New facilities to support better storage and logistics across regions.",
   },
 ];

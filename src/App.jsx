@@ -7,6 +7,7 @@ import Home from './Pages/Home';
 import About from './Pages/About';
 import Service from './Pages/Service';
 import Product from './Pages/Product';
+import Education from './Pages/Education';
 import Blog from './Pages/Blog';
 import Contact from './Pages/Contact';
 import SignIn from './Pages/SignIn';
@@ -15,7 +16,7 @@ import ResetPassword from './Pages/ResetPassword';
 
 // Dashboard
 import DashboardLayout from './layout/DashboardLayout';
-import Dashboard from './components/dashboard/components/Dashboard';
+import Dashboard from './components/dashboard/components/Dashboard'
 import UserManagement from './components/dashboard/admin/UserManagement';
 import ProductManagement from './components/dashboard/admin/ProductManagement';
 import EducationManagement from './components/dashboard/admin/EducationManagement';
@@ -29,7 +30,7 @@ import FarmerProductManagement from './components/dashboard/farmer/FarmerProduct
 import UserDashboard from './components/dashboard/user/UserDashboard';
 import UserProductView from './components/dashboard/user/UserProductView ';
 import UserReviewManagement from './components/dashboard/user/UserReviewManagement';
-import UserEducationView from './components/dashboard/user/UserEducationView ';
+// import UserEducationView from './components/dashboard/user/UserEducationView ';
 import FarmerEducationManagement from './components/dashboard/farmer/FarmerEducationManagement';
 import DashboardRedirect from './components/dashboard/DashboardRedirects';
 import FarmerReviews from './components/dashboard/farmer/FarmerReviews';
@@ -52,7 +53,8 @@ const router = createBrowserRouter([
       { path: 'about', element: <About /> },
       { path: 'service', element: <Service /> },
       { path: 'product', element: <Product /> },
-      
+      { path: 'education', element: <Education /> },
+
     ],
   },
 { path: 'blog', element: <Blog /> },
@@ -86,7 +88,7 @@ const router = createBrowserRouter([
     // USER ROUTES
     { path: 'buyer', element: <UserDashboard /> },
     { path: 'buyer/products', element: <UserProductView /> },
-    { path: 'buyer/education', element: <UserEducationView /> },
+    // { path: 'buyer/education', element: <UserEducationView /> },
     { path: 'buyer/reviews', element: <UserReviewManagement /> },
     { path: 'buyer/order-tracking', element: <UserOrderTracking /> },
   ],

@@ -1,30 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import o4 from '../assets/product/o4.webp';
-import o9 from '../assets/product/o9.webp';
-import c10 from '../assets/product/c10.jpg';
-import m6 from '../assets/product/m6.jpg';
-import s14 from '../assets/product/s14.jpg';
-import s15 from '../assets/product/s15.avif';
-import t6 from '../assets/product/t6.avif';
-import g5 from '../assets/product/g5.avif';
-import so1 from '../assets/product/so1.jpg';
-import n9 from '../assets/product/n9.jpg';
-import n10 from '../assets/product/n10.avif';
-
-const products = [
-  { id: 1, name: 'Castor Oil', price: { kg: 20, bag: 300 }, image: o4 },
-  { id: 2, name: 'Castor Seed', price: { kg: 18, bag: 250 }, image: o9 },
-  { id: 3, name: 'Cashew', price: { kg: 40, bag: 500 }, image: c10 },
-  { id: 4, name: 'Maize', price: { kg: 25, bag: 350 }, image: m6 },
-  { id: 5, name: 'Ginger', price: { kg: 30, bag: 400 }, image: g5 },
-  { id: 6, name: 'Soybeans', price: { kg: 18, bag: 250 }, image: so1 },
-  { id: 7, name: 'Shea Nuts', price: { kg: 22, bag: 280 }, image: s15 },
-  { id: 8, name: 'Shea Butter', price: { kg: 22, bag: 280 }, image: s14 },
-  { id: 9, name: 'Peanut', price: { kg: 24, bag: 310 }, image: n9 },
-  { id: 10, name: 'Groundnut', price: { kg: 24, bag: 310 }, image: n10 },
-  { id: 11, name: 'Tiger Nuts', price: { kg: 28, bag: 320 }, image: t6 },
-];
 
 const currencySymbols = {
   USD: '$', EUR: '€', GHS: '₵', GBP: '£',
@@ -32,252 +8,225 @@ const currencySymbols = {
   JPY: '¥', CNY: '¥', INR: '₹',
 };
 
-
-
 const supportedCurrencies = Object.keys(currencySymbols);
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+const CLOUD_NAME = 'dl985xbfh';
+const CLOUDINARY_BASE = `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/`;
+const PAYAZA_PUBLIC_KEY = "PZ78-PKLIVE-DDA9F9B0-6ACC-4045-B689-D0A0842D1876";
+const EXCHANGE_KEY = 'cur_live_o7Ylcc946R6Gqz3cMpRX0IfpSWK5bx78FHkywNRK';
 
-const ProductCard = ({ product, onClick, convertPrice, currency }) => (
-  <div
-    onClick={() => onClick(product)}
-    style={{
-      width: '300px', height: '350px', padding: '16px',
-      border: '1px solid #ccc', borderRadius: '10px',
-      textAlign: 'center', cursor: 'pointer',
-      boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
-    }}
-  >
-    <img
-      src={product.image}
-      alt={product.name}
-      style={{
-        width: '90%', height: '220px', objectFit: 'cover',
-        borderRadius: '8px',
-      }}
-    />
-    <h3>{product.name}</h3>
-    <p>
-      From: {currencySymbols[currency]}
-      {convertPrice(product.price.kg).toFixed(2)} / kg
-    </p>
-  </div>
-);
-
-const ProductGrid = () => {
+const Product = () => {
+  const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [quantity, setQuantity] = useState('');
-  const [unit, setUnit] = useState('kg');
   const [currency, setCurrency] = useState('GHS');
   const [rates, setRates] = useState({});
-  const [loadingRates, setLoadingRates] = useState(false);
   const [error, setError] = useState(null);
-  const [showPayment, setShowPayment] = useState(false);
-  const [paymentAmount, setPaymentAmount] = useState(0);
-
-  const API_KEY = 'cur_live_o7Ylcc946R6Gqz3cMpRX0IfpSWK5bx78FHkywNRK';
-  const API_URL = 'https://api.currencyapi.com/v3/latest';
-  const PAYMENT_URL = 'https://business.payaza.africa/pay/castorcareghanalimited';
+  const [email, setEmail] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [checkoutView, setCheckoutView] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchRates = async () => {
-      setLoadingRates(true);
-      try {
-        const response = await axios.get(API_URL, {
-          headers: { apikey: API_KEY },
-          params: {
-            base_currency: 'GHS',
-            currencies: supportedCurrencies.join(','),
-          },
-        });
+    axios.get(`${BASE_URL}/products`).then((res) => setProducts(res.data)).catch(console.error);
+  }, []);
 
-        const fetchedRates = {};
-        supportedCurrencies.forEach((curr) => {
-          if (response.data.data[curr]) {
-            fetchedRates[curr] = response.data.data[curr].value;
-          }
+  useEffect(() => {
+    axios.get('https://api.currencyapi.com/v3/latest', {
+      headers: { apikey: EXCHANGE_KEY },
+      params: { base_currency: 'GHS', currencies: supportedCurrencies.join(',') },
+    })
+      .then((res) => {
+        const newRates = {};
+        supportedCurrencies.forEach((c) => {
+          if (res.data.data[c]) newRates[c] = res.data.data[c].value;
         });
-        setRates(fetchedRates);
+        setRates(newRates);
         setError(null);
-      } catch (err) {
-        console.error('Error fetching exchange rates:', err);
-        setError('Failed to fetch currency rates.');
-      } finally {
-        setLoadingRates(false);
-      }
-    };
-
-    fetchRates();
+      })
+      .catch(() => setError('Failed to load exchange rates'));
   }, []);
 
   const convertPrice = (priceInGHS) => {
-    if (currency === 'GHS' || !rates[currency]) return priceInGHS;
-    return priceInGHS * rates[currency];
+    const rate = rates?.[currency];
+    if (currency === 'GHS' || !rate || typeof priceInGHS !== 'number') return Number(priceInGHS || 0);
+    return Number(priceInGHS * rate);
   };
 
   const handleProductClick = (product) => {
     setSelectedProduct(product);
     setQuantity('');
-    setUnit('kg');
+    setCheckoutView(false);
+  };
+
+  const confirmOrder = () => {
+    if (!selectedProduct || !quantity || quantity < 1) {
+      alert('Please select product and quantity');
+      return;
+    }
+    setCheckoutView(true);
   };
 
   const handlePayment = () => {
-    const amount = selectedProduct && quantity
-      ? convertPrice(selectedProduct.price[unit]) * quantity
-      : 0;
-    setPaymentAmount(amount.toFixed(2));
-    setShowPayment(true);
+    if (!selectedProduct || !quantity || quantity < 1) return alert('Invalid product or quantity.');
+    if (!email || !firstName || !phoneNumber) return alert('Please fill all fields.');
+
+    const amount = parseFloat((selectedProduct.price * quantity).toFixed(2));
+
+    if (!window.PayazaCheckout) {
+      alert('Payaza Checkout is not loaded. Try refreshing the page.');
+      return;
+    }
+
+    const transactionRef = "TRX-" + Date.now();
+
+    const payazaCheckout = PayazaCheckout.setup({
+      merchant_key: PAYAZA_PUBLIC_KEY,
+      connection_mode: "Live",
+      checkout_amount: amount,
+      currency_code: "GHS",
+      email_address: email,
+      first_name: firstName,
+      last_name: 'Customer',
+      phone_number: phoneNumber,
+      transaction_reference: transactionRef,
+      virtual_account_configuration: { expires_in_minutes: 15 },
+      additional_details: { note: "Castor Care Product Order" },
+    });
+
+    payazaCheckout.setCallback((response) => {
+      if (response.status === "successful") {
+        alert('✅ Payment successful!');
+      } else {
+        alert("❌ Payment failed or cancelled.");
+      }
+    });
+
+    payazaCheckout.setOnClose(() => {
+      console.log("🟡 Payaza popup closed by user.");
+    });
+
+    payazaCheckout.showPopup();
+  };
+
+  const handleRedirectToSignIn = () => {
+    const amount = parseFloat((selectedProduct.price * quantity).toFixed(2));
+    localStorage.setItem('pendingPayazaEmail', email);
+    localStorage.setItem('pendingPayazaAmount', amount);
+    localStorage.setItem('redirectToPayaza', 'true');
+    localStorage.setItem('redirectAfterLogin', 'payaza');
+    navigate('/signin');
+  };
+
+  const handleRedirectToSignUp = () => {
+    const amount = parseFloat((selectedProduct.price * quantity).toFixed(2));
+    localStorage.setItem('pendingPayazaEmail', email);
+    localStorage.setItem('pendingPayazaAmount', amount);
+    localStorage.setItem('redirectToPayaza', 'true');
+    localStorage.setItem('redirectAfterLogin', 'payaza');
+    navigate('/signup');
   };
 
   useEffect(() => {
-    const handleMessage = (event) => {
-      if (event.data === 'payment_success') {
-        alert('✅ Payment successful!');
-        setShowPayment(false);
-        setSelectedProduct(null);
-        setQuantity('');
-        setUnit('kg');
-      }
-    };
-    window.addEventListener('message', handleMessage);
-    return () => window.removeEventListener('message', handleMessage);
+    const shouldRedirect = localStorage.getItem('redirectToPayaza') === 'true';
+    const storedEmail = localStorage.getItem('pendingPayazaEmail');
+    const storedAmount = parseFloat(localStorage.getItem('pendingPayazaAmount'));
+
+    if (shouldRedirect && storedEmail && storedAmount) {
+      localStorage.removeItem('pendingPayazaEmail');
+      localStorage.removeItem('pendingPayazaAmount');
+      localStorage.removeItem('redirectToPayaza');
+      setEmail(storedEmail);
+
+      setTimeout(() => {
+        handlePayment();
+      }, 500);
+    }
   }, []);
 
-  const totalPrice =
-    selectedProduct && quantity
-      ? convertPrice(selectedProduct.price[unit]) * quantity
-      : 0;
+  const totalPrice = selectedProduct && quantity ? convertPrice(selectedProduct.price) * quantity : 0;
+  const totalInGHS = selectedProduct && quantity ? (selectedProduct.price * quantity).toFixed(2) : '0.00';
 
   return (
-    <div style={{ padding: '40px', marginTop: '8%', fontFamily: 'Arial, sans-serif', color: '#333' }}>
+    <div style={{ padding: '40px', marginTop: '8%', fontFamily: 'Arial, sans-serif' }}>
       <h2 style={{ fontSize: '30px', fontWeight: 'bold', textAlign: 'center', marginBottom: '30px' }}>
         Order Our Products
       </h2>
 
       <div style={{ textAlign: 'center', marginBottom: '20px' }}>
         <label style={{ marginRight: '10px' }}>Select Currency:</label>
-        <select
-          value={currency}
-          onChange={(e) => setCurrency(e.target.value)}
-          style={{ padding: '8px' }}
-        >
+        <select value={currency} onChange={(e) => setCurrency(e.target.value)} style={{ padding: '8px' }}>
           {supportedCurrencies.map((curr) => (
-            <option key={curr} value={curr}>
-              {curr} ({currencySymbols[curr]})
-            </option>
+            <option key={curr} value={curr}>{curr} ({currencySymbols[curr]})</option>
           ))}
         </select>
-        {loadingRates && <p>Loading exchange rates...</p>}
         {error && <p style={{ color: 'red' }}>{error}</p>}
       </div>
 
-      <div
-        style={{
-          display: 'flex', flexWrap: 'wrap',
-          gap: '50px', justifyContent: 'center',
-        }}
-      >
-        {products.map((product) => (
-          <ProductCard
-            key={product.id}
-            product={product}
-            onClick={handleProductClick}
-            convertPrice={convertPrice}
-            currency={currency}
-          />
-        ))}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '50px', justifyContent: 'center' }}>
+        {products.map((product) => {
+          const imageUrl = product.image.startsWith('http') ? product.image : `${CLOUDINARY_BASE}${product.image}`;
+          const priceDisplay = Number(convertPrice(product.price)).toFixed(2);
+
+          return (
+            <div key={product._id} onClick={() => handleProductClick(product)} style={{
+              width: '300px', height: '350px', padding: '16px',
+              border: '1px solid #ccc', borderRadius: '10px',
+              textAlign: 'center', cursor: 'pointer',
+              boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+            }}>
+              <img src={imageUrl} alt={product.title} style={{ width: '90%', height: '220px', objectFit: 'cover', borderRadius: '8px' }} />
+              <h3>{product.title}</h3>
+              <p>From: {currencySymbols[currency]}{priceDisplay} / {product.unit}</p>
+              <p style={{ fontSize: '12px', color: 'gray' }}>Stock: {product.stock}</p>
+            </div>
+          );
+        })}
       </div>
 
-      {selectedProduct && (
-        <div className="fixed inset-0 bg-black/75 bg-opacity-60 flex justify-center items-center z-50">
+      {selectedProduct && !checkoutView && (
+        <div className="fixed inset-0 bg-black/75 flex justify-center items-center z-50">
           <div className="bg-white p-6 rounded-lg w-80 relative">
-            <button
-              onClick={() => setSelectedProduct(null)}
-              className="absolute top-2 right-3 text-lg"
-            >✕</button>
-            <div className=" items-center mb-2">
-              <h2 className="text-lg font-bold">{selectedProduct.name}</h2>
-            </div>
-            <img
-              src={selectedProduct.image}
-              alt={selectedProduct.name}
-              className="w-full h-50 object-cover rounded"
-            />
-            
+            <button onClick={() => setSelectedProduct(null)} className="absolute top-2 right-3 text-lg">✕</button>
+            <img src={selectedProduct.image.startsWith('http') ? selectedProduct.image : `${CLOUDINARY_BASE}${selectedProduct.image}`} alt={selectedProduct.title} className="w-full h-50 object-cover rounded" />
             <div className="mt-4">
-              <p className="text-sm mt-2 text-right">{currencySymbols[currency]}{convertPrice(selectedProduct.price.kg).toFixed(2)} / kg</p>
+              <p className="text-sm mt-2 text-right">
+                {currencySymbols[currency]}{Number(convertPrice(selectedProduct.price)).toFixed(2)} / {selectedProduct.unit}
+              </p>
               <label className="block mb-1">Quantity:</label>
-              <input
-                type="number"
-                min="1"
-                value={quantity}
-                onChange={(e) => setQuantity(e.target.value)}
-                className="w-full p-2 border rounded mb-2"
-              />
-              <label className="block mb-1">Unit:</label>
-              <select
-                value={unit}
-                onChange={(e) => setUnit(e.target.value)}
-                className="w-full p-2 border rounded mb-4"
-              >
-                <option value="kg">kg</option>
-                <option value="bag">bag</option>
-                <option value="pcs">pcs</option>
-                <option value="liter">liter</option>
-                <option value="milliliters">ml</option>
-              </select>
+              <input type="number" min="1" value={quantity} onChange={(e) => setQuantity(e.target.value)} className="w-full p-2 border border-gray-300 rounded mb-4" />
               <p className="font-semibold">Total: {currencySymbols[currency]}{totalPrice.toFixed(2)}</p>
-              <button
-                onClick={handlePayment}
-                className="mt-3 w-full bg-green-600 text-white py-2 rounded hover:bg-green-700"
-              >Confirm Order & Pay</button>
+              <small className="text-gray-500">Charged in GHS: ₵{totalInGHS}</small>
+              <button onClick={confirmOrder} className="mt-3 w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">Confirm Order</button>
             </div>
           </div>
         </div>
       )}
-      {showPayment && (
-        <div
-          style={{
-            position: 'fixed',
-            top: 0, left: 0, right: 0, bottom: 0,
-            backgroundColor: 'rgba(0,0,0,0.7)',
-            zIndex: 1000,
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
-          <div
-            style={{
-              position: 'relative',
-              width: '80%',
-              height: '95vh',
-              background: 'white',
-              borderRadius: '8px',
-              overflow: 'hidden',
-            }}
-          >
-            <button
-              onClick={() => setShowPayment(false)}
-              style={{
-                position: 'absolute',
-                top: 10, right: 10,
-                background: 'transparent',
-                border: 'none',
-                fontSize: '1.5rem',
-                cursor: 'pointer',
-              }}
-            >
-              ✕
-            </button>
-            <iframe
-              title="Payment App"
-              src={`${PAYMENT_URL}?amount=${paymentAmount}`}
-              style={{
-                width: '100%',
-                height: '100%',
-                border: 'none',
-              }}
-              allow="payment"
-            />
+
+      {checkoutView && selectedProduct && (
+        <div className="fixed inset-0 bg-black/75 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded-lg w-96 relative">
+            <button onClick={() => setCheckoutView(false)} className="absolute top-2 right-3 text-lg">✕</button>
+            <h3 className="text-lg font-bold mb-2">Checkout</h3>
+            <p><strong>Product:</strong> {selectedProduct.title}</p>
+            <p><strong>Quantity:</strong> {quantity} {selectedProduct.unit}</p>
+            <p><strong>Total:</strong> {currencySymbols[currency]}{totalPrice.toFixed(2)}<br />
+              <small className="text-gray-500">Charged in GHS: ₵{totalInGHS}</small>
+            </p>
+
+            <label className="block mt-3">Name:</label>
+            <input type="text" className="w-full p-2 border border-gray-300 rounded mb-2" placeholder="Your Name" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
+
+            <label className="block">Phone Number:</label>
+            <input type="tel" className="w-full p-2 border border-gray-300 rounded mb-2" placeholder="e.g. 0551234567" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} />
+
+            <label className="block">Email:</label>
+            <input type="email" className="w-full p-2 border border-gray-300 rounded mb-3" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} />
+
+            <button onClick={handlePayment} className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">Pay with Payaza</button>
+            <p className="mt-2 text-sm text-center">Have an account? <span className="text-blue-600 cursor-pointer" onClick={handleRedirectToSignIn}>Sign in</span></p>
+            <p className="mt-1 text-sm text-center">No account yet? <span className="text-blue-600 cursor-pointer" onClick={handleRedirectToSignUp}>Sign up</span></p>
           </div>
         </div>
       )}
@@ -285,4 +234,4 @@ const ProductGrid = () => {
   );
 };
 
-export default ProductGrid;
+export default Product;
