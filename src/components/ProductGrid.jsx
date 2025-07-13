@@ -11,10 +11,10 @@ const currencySymbols = {
 
 const supportedCurrencies = Object.keys(currencySymbols);
 const BASE_URL = import.meta.env.VITE_BASE_URL;
-const CLOUD_NAME = 'dl985xbfh';
-const CLOUDINARY_BASE = `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/`;
-const PAYAZA_PUBLIC_KEY = "PZ78-PKLIVE-DDA9F9B0-6ACC-4045-B689-D0A0842D1876";
-const EXCHANGE_KEY = 'cur_live_o7Ylcc946R6Gqz3cMpRX0IfpSWK5bx78FHkywNRK';
+const CLOUD_NAME = import.meta.env.VITE_CLOUD_NAME;
+const CLOUDINARY_BASE = import.meta.env.VITE_CLOUDINARY_URL || `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/`;
+const PAYAZA_PUBLIC_KEY = import.meta.env.VITE_PAYAZA_PUBLIC_KEY;
+const EXCHANGE_KEY = import.meta.env.VITE_EXCHANGE_KEY;
 
 const ProductGrid = () => {
   const [products, setProducts] = useState([]);
