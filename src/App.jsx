@@ -28,7 +28,7 @@ import FarmerProductManagement from './components/dashboard/farmer/FarmerProduct
 import UserDashboard from './components/dashboard/user/UserDashboard';
 import UserProductView from './components/dashboard/user/UserProductView ';
 import UserReviewManagement from './components/dashboard/user/UserReviewManagement';
-import UserEducationView from './components/dashboard/user/UserEducationView ';
+// import UserEducationView from './components/dashboard/user/UserEducationView ';
 import FarmerEducationManagement from './components/dashboard/farmer/FarmerEducationManagement';
 import DashboardRedirect from './components/dashboard/DashboardRedirects';
 import FarmerReviews from './components/dashboard/farmer/FarmerReviews';
@@ -77,7 +77,7 @@ const router = createBrowserRouter([
     // USER ROUTES
     { path: 'buyer', element: <UserDashboard /> },
     { path: 'buyer/products', element: <UserProductView /> },
-    { path: 'buyer/education', element: <UserEducationView /> },
+    // { path: 'buyer/education', element: <UserEducationView /> },
     { path: 'buyer/reviews', element: <UserReviewManagement /> },
     { path: 'buyer/order-tracking', element: <UserOrderTracking /> },
   ],
