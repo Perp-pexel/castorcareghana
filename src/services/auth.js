@@ -12,33 +12,10 @@ export const apiLogin = async (payload) => {
 
 // Get user data
 export const getUserData = async () => {
-  const token = localStorage.getItem("token");
-
-  if (!token) {
-    throw new Error("No token found");
-  }
-
-  return await apiClient.get("/users/me", {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  return await apiClient.get("/users/me");
 };
 
 // Update user data
 export const updateUserData = async (updatedData) => {
-  const token = localStorage.getItem("token");
-
-  if (!token) {
-    throw new Error("No token found");
-  }
-
-  return await apiClient.patch("/users/me", updatedData, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  return await apiClient.patch("/users/me", updatedData);
 };
-
-
-
