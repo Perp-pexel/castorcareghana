@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
-const PAYAZA_PUBLIC_KEY = "PZ78-PKLIVE-DDA9F9B0-6ACC-4045-B689-D0A0842D1876";
+const PAYAZA_PUBLIC_KEY = import.meta.env.VITE_PAYAZA_PUBLIC_KEY;
 
 const Education = () => {
   const [educations, setEducations] = useState([]);
