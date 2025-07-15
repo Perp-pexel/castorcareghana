@@ -16,6 +16,9 @@ export const apiPostProducts = async (formData) =>
 export const apiGetAllProducts = async () => {
   return apiClient.get('/products');
 };
+export const apiGetAllFarmerProducts = async () => {
+  return apiClient.get('/products/farmers');
+};
 
 export const apiUpdateProduct = async (id, payload) => {
   return apiClient.patch(`/products/${id}`, payload);

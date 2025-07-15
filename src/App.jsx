@@ -36,6 +36,12 @@ import DashboardRedirect from './components/dashboard/DashboardRedirects';
 import FarmerReviews from './components/dashboard/farmer/FarmerReviews';
 import UserOrderTracking from './components/dashboard/user/UserOrderTracking';
 import { CartProvider } from './components/dashboard/contexts/CartContext';
+import SuperAdminDashboard from './components/dashboard/super/SuperAdminDashboard';
+import SuperAdminUserManagement from './components/dashboard/super/UserManagement';
+import SuperAaminProductManagement from './components/dashboard/super/ProductManagement';
+import SuperAdminEducationManagement from './components/dashboard/super/EducationManagement';
+import SuperAdminProductManagement from './components/dashboard/super/ProductManagement';
+import AdminFarmerProductsManagement from './components/dashboard/super/AdminFarmerProductsManagement';
 
 
 
@@ -57,49 +63,57 @@ const router = createBrowserRouter([
 
     ],
   },
-{ path: 'blog', element: <Blog /> },
-{ path: 'contact', element: <Contact /> },
-{ path: 'signin', element: <SignIn /> },
-{ path: 'signup', element: <SignUp /> },
-{ path: "/reset-password/:token", element: <ResetPassword />},
-{ path: '*', element: <h2 style={{ textAlign: 'center', marginTop: '100px', fontSize: '30px' }}>404 - Page Not Found</h2> },
+  { path: 'blog', element: <Blog /> },
+  { path: 'contact', element: <Contact /> },
+  { path: 'signin', element: <SignIn /> },
+  { path: 'signup', element: <SignUp /> },
+  { path: "/reset-password/:token", element: <ResetPassword /> },
+  { path: '*', element: <h2 style={{ textAlign: 'center', marginTop: '100px', fontSize: '30px' }}>404 - Page Not Found</h2> },
 
 
 
-{
-  path: '/dashboard',
-  element: <DashboardLayout />,
-  children: [
-    { index: true, element: <DashboardRedirect /> }, 
+  {
+    path: '/dashboard',
+    element: <DashboardLayout />,
+    children: [
+      { index: true, element: <DashboardRedirect /> },
 
-    // ADMIN ROUTES
-    { path: 'admin', element: <AdminDashboard /> },
-    { path: 'admin/users', element: <UserManagement /> },
-    { path: 'admin/products', element: <ProductManagement /> },
-    { path: 'admin/education', element: <EducationManagement /> },
-    { path: 'admin/reviews', element: <ReviewManagement /> },
+      // ADMIN ROUTES
+      { path: 'admin', element: <AdminDashboard /> },
+      { path: 'admin/users', element: <UserManagement /> },
+      { path: 'admin/products', element: <ProductManagement /> },
+      { path: 'admin/education', element: <EducationManagement /> },
+      { path: 'admin/reviews', element: <ReviewManagement /> },
 
-    // FARMER ROUTES
-    { path: 'farmer', element: <FarmerDashboard /> },
-    { path: 'farmer/products', element: <FarmerProductManagement /> },
-    { path: 'farmer/education', element: <FarmerEducationManagement /> },
-    { path: 'farmer/reviews', element: <FarmerReviews /> },
+      // SUPER ADMIN ROUTES
+      { path: 'superadmin', element: <SuperAdminDashboard /> },
+      { path: 'superadmin/users', element: <SuperAdminUserManagement /> },
+      { path: 'superadmin/products', element: <SuperAdminProductManagement /> },
+      { path: 'superadmin/education', element: <SuperAdminEducationManagement /> },
+      { path: 'superadmin/reviews', element: <ReviewManagement /> },
+      { path: 'superadmin/farmerproducts', element: <AdminFarmerProductsManagement /> },
 
-    // USER ROUTES
-    { path: 'buyer', element: <UserDashboard /> },
-    { path: 'buyer/products', element: <UserProductView /> },
-    // { path: 'buyer/education', element: <UserEducationView /> },
-    { path: 'buyer/reviews', element: <UserReviewManagement /> },
-    { path: 'buyer/order-tracking', element: <UserOrderTracking /> },
-  ],
-}
+      // FARMER ROUTES
+      { path: 'farmer', element: <FarmerDashboard /> },
+      { path: 'farmer/products', element: <FarmerProductManagement /> },
+      { path: 'farmer/education', element: <FarmerEducationManagement /> },
+      { path: 'farmer/reviews', element: <FarmerReviews /> },
+
+      // USER ROUTES
+      { path: 'buyer', element: <UserDashboard /> },
+      { path: 'buyer/products', element: <UserProductView /> },
+      // { path: 'buyer/education', element: <UserEducationView /> },
+      { path: 'buyer/reviews', element: <UserReviewManagement /> },
+      { path: 'buyer/order-tracking', element: <UserOrderTracking /> },
+    ],
+  }
 
 
 ]);
 
 const App = () => {
   return (
-   <AuthProvider>
+    <AuthProvider>
       <CartProvider>
         <RouterProvider router={router} />
       </CartProvider>

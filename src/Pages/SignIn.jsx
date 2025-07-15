@@ -57,8 +57,10 @@ const SignIn = () => {
       });
 
       // Redirect based on role
-      if (user.role === 'admin') navigate('/dashboard/admin');
-      else if (user.role === 'farmer') navigate('/dashboard/farmer');
+      const role = user.role?.toLowerCase();
+      if (role === 'superadmin' || role === 'super-admin') navigate('/dashboard/super-admin');
+      else if (role === 'admin') navigate('/dashboard/admin');
+      else if (role === 'farmer') navigate('/dashboard/farmer');
       else navigate('/dashboard/buyer');
     } catch (error) {
       console.error('❌ Login error:', error);
@@ -186,15 +188,15 @@ const SignIn = () => {
               style={inputStyle}
             />
             <div style={{ position: 'relative' }}>
-            <input
-              type={showPassword ? 'text' : 'password'}
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              style={inputStyle}
-             />
-            
+              <input
+                type={showPassword ? 'text' : 'password'}
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                style={inputStyle}
+              />
+
               <span
                 onClick={() => setShowPassword(!showPassword)}
                 style={{
@@ -208,7 +210,7 @@ const SignIn = () => {
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </span>
             </div>
-           
+
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
               <label>
                 <input
