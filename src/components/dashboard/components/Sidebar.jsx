@@ -5,18 +5,32 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 const Sidebar = () => {
-  const { user, logout, hasPermission } = useAuth();
+  const { user, logout, hasPermission, loading } = useAuth();
+
   const navigate = useNavigate();
   const location = useLocation();
 
-  const role = user?.role?.toLowerCase(); 
+  if (loading || !user) {
+    return null; // ⏳ Don't render sidebar until user is ready
+  }
+  const role = user?.role?.toLowerCase();
+console.log("Sidebar ROLE:", role);
   const sidebarMenus = {
     admin: [
       { id: 'dashboard', label: 'Dashboard', icon: Home },
       { id: 'users', label: 'Users', icon: Users, permission: 'getUsers' },
       { id: 'products', label: 'Products', icon: Package, permission: 'getProducts' },
+      { id: 'education', label: 'Education', icon: BookOpen, permission: 'getEducations' },
+      { id: 'reviews', label: 'Reviews', icon: Star, permission: 'getReviews' },
+    ],
+    "superadmin": [
+      { id: 'dashboard', label: 'Dashboard', icon: Home },
+      { id: 'users', label: 'Users', icon: Users, permission: 'getUsers' },
+      { id: 'products', label: 'Products', icon: Package, permission: 'getProducts' },
+      { id: 'farmerproducts', label: 'Farmer Products', icon: Package, permission: 'getProducts' },
       { id: 'education', label: 'Education', icon: BookOpen, permission: 'getEducations' },
       { id: 'reviews', label: 'Reviews', icon: Star, permission: 'getReviews' },
     ],
@@ -29,7 +43,6 @@ const Sidebar = () => {
     buyer: [
       { id: 'dashboard', label: 'Dashboard', icon: Home },
       { id: 'products', label: 'Available Products', icon: Package, permission: 'getProducts' },
-      // { id: 'education', label: 'Learn', icon: BookOpen, permission: 'getEducations' },
       { id: 'reviews', label: 'My Reviews', icon: Star, permission: 'getReviews' },
       { id: 'order-tracking', label: 'My Orders', icon: ClipboardList, permission: 'trackOrders' },
     ]
@@ -41,7 +54,8 @@ const Sidebar = () => {
     switch (role) {
       case 'admin': return 'bg-red-100 text-red-800';
       case 'farmer': return 'bg-green-100 text-green-800';
-      case 'user': return 'bg-blue-100 text-blue-800';
+      case 'buyer': return 'bg-blue-100 text-blue-800';
+      case 'super-admin': return 'bg-purple-100 text-purple-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
@@ -50,33 +64,38 @@ const Sidebar = () => {
     switch (role) {
       case 'admin': return Settings;
       case 'farmer': return Sprout;
-      case 'user': return User;
+      case 'buyer': return User;
+      case 'super-admin': return Settings;
       default: return User;
     }
   };
 
   const RoleIcon = getRoleIcon(role);
 
-  // Debug logs
-  console.log("Sidebar user:", user);
-  console.log("User role:", role);
-  console.log("Menu items:", menuItems);
+  const handleLogout = () => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'You will be logged out of your account.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, logout',
+      cancelButtonText: 'Cancel',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        logout();
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = '/signin';
+      }
+    });
+  };
 
   return (
     <div className="w-64 bg-white shadow-lg border-r border-green-100 flex flex-col">
       {/* Top Section */}
       <div className="p-6 border-b border-green-100">
-        {/* <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center">
-            <Sprout className="w-6 h-6 text-white" />
-          </div>
-          <div>
-            <h1 className="text-xl font-bold text-gray-900">AgroManager</h1>
-            <p className="text-sm text-gray-600">Dashboard</p>
-          </div>
-        </div> */}
-
-        {/* User Role Info */}
         <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
           <div className="w-10 h-10 bg-green-200 rounded-full flex items-center justify-center">
             <RoleIcon className="w-5 h-5 text-green-700" />
@@ -123,10 +142,10 @@ const Sidebar = () => {
         </ul>
       </nav>
 
-      {/* Logout Button */}
+      {/* Logout */}
       <div className="p-4 border-t border-green-100">
         <button
-          onClick={logout}
+          onClick={handleLogout}
           className="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-200"
         >
           <LogOut className="w-5 h-5" />

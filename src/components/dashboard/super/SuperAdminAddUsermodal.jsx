@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { apiSignup } from '../../../services/auth';
 import Swal from 'sweetalert2';
 
-const AddUserModal = ({ editingUser, onClose, onSuccess }) => {
+const SuperAdminAddUserModal = ({ editingUser, onClose, onSuccess }) => {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -163,6 +163,7 @@ const AddUserModal = ({ editingUser, onClose, onSuccess }) => {
               <option value="">-- Select Role --</option>
               <option value="buyer">Buyer</option>
               <option value="farmer">Farmer</option>
+              <option value="farmer">Admin</option>
              
             </select>
           </div>
@@ -205,4 +206,4 @@ const AddUserModal = ({ editingUser, onClose, onSuccess }) => {
   );
 };
 
-export default AddUserModal;
+export default SuperAdminAddUserModal;

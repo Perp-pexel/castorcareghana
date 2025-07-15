@@ -16,6 +16,9 @@ export const apiPostProducts = async (formData) =>
 export const apiGetAllProducts = async () => {
   return apiClient.get('/products');
 };
+export const apiGetAllFarmerProducts = async () => {
+  return apiClient.get('/products/farmers');
+};
 
 export const apiGetUserProducts = async () => {
   return await apiClient.get("/users/me/products");

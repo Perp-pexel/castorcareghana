@@ -37,6 +37,15 @@ const rolePermissions = [
       'createUser', 'updateUser', 'deleteUser', 'getUser', 'getUsers', 'getMyProducts',
       'createReview', 'updateReview', 'deleteReview', 'getReview', 'getReviews'
     ]
+  },
+  {
+    role: 'superadmin',
+    actions: [
+      'createProduct', 'updateProduct', 'deleteProduct', 'getProduct', 'getProducts',
+      'createEducation', 'updateEducation', 'deleteEducation', 'getEducation', 'getEducations',
+      'createUser', 'updateUser', 'deleteUser', 'getUser', 'getUsers',
+      'createReview', 'updateReview', 'deleteReview', 'getReview', 'getReviews'
+    ]
   }
 ];
 
@@ -99,7 +108,6 @@ export const AuthProvider = ({ children }) => {
         }
       : null;
 
-  // ✅ Refresh the user after update
   const refreshUser = async () => {
     try {
       const res = await getUserData(); // expects token to be sent via headers
@@ -118,7 +126,7 @@ export const AuthProvider = ({ children }) => {
     isAuthenticated,
     getUserRole,
     getUserInfo,
-    refreshUser, // ✅ included in context
+    refreshUser,
     loading
   };
 

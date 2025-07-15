@@ -8,12 +8,12 @@ import { getUserData, updateUserData } from '../../../services/auth';
 import { apiGetUsers, apiGetAllProducts, apiGetAllReviews, apiGetEducations } from '../../../services/products';
 import { useAuth } from '../contexts/AuthContext';
 import { Link } from 'react-router-dom';
-import AddProductModal from '../../../components/dashboard/admin/AddProductModal';
-import CreateEducationModal from '../../../components/dashboard/admin/CreateEducationModal';
+import AddProductModal from '../admin/AddProductModal';
+import CreateEducationModal from '../admin/CreateEducationModal';
 import ViewReviewModal from '../admin/ViewReviewModal';
-import AddUserModal from './AddUsermodal';
+import AddUserModal from '../super/SuperAdminAddUsermodal';
 
-const AdminDashboard = () => {
+const SuperAdminDashboard = () => {
   const { user, hasPermission, refreshUser } = useAuth();
   const [admin, setAdmin] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -279,4 +279,4 @@ const AdminDashboard = () => {
   );
 };
 
-export default AdminDashboard;
+export default SuperAdminDashboard;
