@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Play, CreditCard, X, Loader2,
+  CreditCard, X, Loader2,
   Clock, Users, Award, AlertCircle, Download
 } from 'lucide-react';
-import { apiGetEducations, apiPayForEducation } from '../../../services/products';
+import { apiGetEducations } from '../../../services/products';
 
 const CLOUDINARY_CLOUD_NAME = 'dl985xbfh';
+const PAYAZA_PUBLIC_KEY = import.meta.env.VITE_PAYAZA_PUBLIC_KEY;
 
 const getMediaUrl = (fileUrl) => {
   if (!fileUrl) return 'https://via.placeholder.com/400x300?text=No+Image';
@@ -23,8 +24,8 @@ function FarmerEducationManagement() {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [paymentLoading, setPaymentLoading] = useState(false);
   const [userEmail, setUserEmail] = useState('');
-  const [userFirstName, setUserFirstName] = useState('');
-  const [userLastName, setUserLastName] = useState('');
+  const [userFullName, setUserFullName] = useState('');
+  const [userPhoneNumber, setUserPhoneNumber] = useState('');
   const [fullscreenImageUrl, setFullscreenImageUrl] = useState(null);
 
   useEffect(() => {
@@ -41,11 +42,11 @@ function FarmerEducationManagement() {
     };
     fetchCourses();
 
-    // Autofill payment fields
     const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
     if (storedUser.email) setUserEmail(storedUser.email);
-    if (storedUser.firstName) setUserFirstName(storedUser.firstName);
-    if (storedUser.lastName) setUserLastName(storedUser.lastName);
+    if (storedUser.contact) setUserPhoneNumber(storedUser.contact);
+    const fullName = [storedUser.firstName, storedUser.lastName].filter(Boolean).join(' ');
+    if (fullName) setUserFullName(fullName);
   }, []);
 
   const handlePreview = (course) => {
@@ -54,47 +55,59 @@ function FarmerEducationManagement() {
   };
 
   const handleEnroll = (course) => {
-    if (course.fee === 0) return;
+    if (course.fee === 0) {
+      window.open(course.url, '_blank');
+      return;
+    }
     setSelectedCourse(course);
     setShowPaymentModal(true);
   };
 
-  const PAYAZA_PUBLIC_KEY = import.meta.env.VITE_PAYAZA_PUBLIC_KEY;
+  const processPayment = () => {
+    const course = selectedCourse;
+    if (!course) return alert('Invalid selection');
+    if (!userEmail || !userFullName || !userPhoneNumber)
+      return alert('Please fill in all required fields.');
 
-const processPayment = () => {
-  if (!userEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userEmail)) {
-    alert('Please enter a valid email.');
-    return;
-  }
+    if (typeof window.PayazaCheckout === 'undefined' || !window.PayazaCheckout.setup) {
+      return alert('❌ Payaza script not loaded. Please refresh the page.');
+    }
 
-  const amountInPesewas = selectedCourse.fee * 100;
+    const [firstName, ...rest] = userFullName.trim().split(' ');
+    const lastName = rest.join(' ') || 'Customer';
+    const transactionRef = `EDU-${course._id}-${Date.now()}`;
 
-  if (window.PayazaCheckout) {
-    window.PayazaCheckout.setup({
-      key: PAYAZA_PUBLIC_KEY,
-      email: userEmail,
-      amount: amountInPesewas,
-      currency: 'GHS',
-      reference: `EDU-${Date.now()}`,
-      metadata: {
-        name: `${userFirstName} ${userLastName}`,
-        courseId: selectedCourse._id,
-        courseTitle: selectedCourse.title
-      },
-      onClose: () => {
-        console.log('Transaction closed');
-      },
-      callback: (response) => {
-        console.log('Payment successful:', response);
-        alert('Payment successful!');
+    const payazaCheckout = window.PayazaCheckout.setup({
+      merchant_key: PAYAZA_PUBLIC_KEY,
+      connection_mode: 'Live',
+      checkout_amount: parseFloat(course.fee),
+      currency_code: 'GHS',
+      email_address: userEmail,
+      first_name: firstName,
+      last_name: lastName,
+      phone_number: userPhoneNumber,
+      transaction_reference: transactionRef,
+      virtual_account_configuration: { expires_in_minutes: 15 },
+      additional_details: { note: `Education payment for ${course.title}` },
+    });
+
+    payazaCheckout.setCallback((response) => {
+      if (response.status === 'successful') {
+        alert('✅ Payment successful!');
+        window.open(course.url, '_blank');
         setShowPaymentModal(false);
+      } else {
+        const reason = response?.message || response?.status_description || 'Unknown error';
+        alert(`❌ Payment failed: ${reason}`);
       }
     });
-  } else {
-    alert('PayazaCheckout script not loaded.');
-  }
-};
 
+    payazaCheckout.setOnClose(() => {
+      console.log('🟡 Payaza popup closed.');
+    });
+
+    payazaCheckout.showPopup();
+  };
 
   const ImageOverlayViewer = () => {
     if (!fullscreenImageUrl) return null;
@@ -130,19 +143,18 @@ const processPayment = () => {
   const CourseModal = () => {
     if (!showCourseModal || !selectedCourse) return null;
 
-    const renderMedia = (media) => {
+    const renderMedia = (media, index) => {
       const url = getMediaUrl(media.fileUrl);
-      const type = media.type;
+      const type = media.type || '';
 
       if (type.startsWith('image')) {
         return (
-          <div key={url} className="mb-4">
+          <div key={index} className="mb-4">
             <img
               src={url}
               alt={media.filename}
               className="rounded w-full max-h-64 object-contain cursor-pointer"
               onClick={() => setFullscreenImageUrl(url)}
-              title="Click to view full image"
             />
           </div>
         );
@@ -151,7 +163,7 @@ const processPayment = () => {
       if (type.startsWith('video')) {
         return (
           <video
-            key={url}
+            key={index}
             src={url}
             controls
             className="w-full rounded h-64 mb-4 object-cover"
@@ -162,7 +174,7 @@ const processPayment = () => {
       if (type.startsWith('audio')) {
         return (
           <audio
-            key={url}
+            key={index}
             controls
             src={url}
             className="w-full mb-4"
@@ -170,24 +182,16 @@ const processPayment = () => {
         );
       }
 
-      if (type.startsWith('application')) {
-        return (
-          <a
-            key={url}
-            href={url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block text-blue-600 underline mb-3"
-          >
-            📄 {media.filename || 'View Document'}
-          </a>
-        );
-      }
-
       return (
-        <p className="text-sm text-gray-500 mb-2">
-          ⚠️ Unsupported media format: {media.type}
-        </p>
+        <a
+          key={index}
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block text-blue-600 underline mb-3"
+        >
+          📄 {media.filename || 'View Document'}
+        </a>
       );
     };
 
@@ -212,9 +216,9 @@ const processPayment = () => {
             Level: {selectedCourse.level || 'Beginner'} • Duration: {selectedCourse.duration || '6h'}
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-20 mb-4">
             {selectedCourse.media?.length > 0
-              ? selectedCourse.media.map(renderMedia)
+              ? selectedCourse.media.map((media, index) => renderMedia(media, index))
               : <p className="text-sm text-gray-400 italic">No media available.</p>}
           </div>
 
@@ -235,7 +239,7 @@ const processPayment = () => {
   };
 
   const PaymentModal = () => {
-    if (!selectedCourse) return null;
+    if (!showPaymentModal || !selectedCourse) return null;
     return (
       <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
         <div className="bg-white p-6 rounded-xl shadow-xl w-full max-w-md relative">
@@ -249,23 +253,23 @@ const processPayment = () => {
           </div>
           <input
             type="email"
-            placeholder="Email"
+            placeholder="Email Address"
             value={userEmail}
             onChange={(e) => setUserEmail(e.target.value)}
             className="w-full px-3 py-2 border rounded mb-2"
           />
           <input
             type="text"
-            placeholder="First Name"
-            value={userFirstName}
-            onChange={(e) => setUserFirstName(e.target.value)}
+            placeholder="Full Name"
+            value={userFullName}
+            onChange={(e) => setUserFullName(e.target.value)}
             className="w-full px-3 py-2 border rounded mb-2"
           />
           <input
-            type="text"
-            placeholder="Last Name"
-            value={userLastName}
-            onChange={(e) => setUserLastName(e.target.value)}
+            type="tel"
+            placeholder="Phone Number"
+            value={userPhoneNumber}
+            onChange={(e) => setUserPhoneNumber(e.target.value)}
             className="w-full px-3 py-2 border rounded mb-4"
           />
 
@@ -282,7 +286,6 @@ const processPayment = () => {
 
           <button
             onClick={processPayment}
-            disabled={paymentLoading}
             className="w-full bg-green-600 text-white py-3 rounded hover:bg-green-700 font-semibold flex justify-center items-center"
           >
             {paymentLoading ? (
@@ -313,13 +316,13 @@ const processPayment = () => {
           {error}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-30 m-30 mt-10">
           {courses.map(course => (
             <div key={course._id} className="bg-white border rounded-xl shadow hover:shadow-lg overflow-hidden">
               <img
                 src={getMediaUrl(course.media?.[0]?.fileUrl)}
                 alt={course.title}
-                className="w-full h-48 object-cover"
+                className="w-full h-60 object-cover cursor-pointer"
               />
               <div className="p-4 space-y-2">
                 <h3 className="text-lg font-bold">{course.title}</h3>

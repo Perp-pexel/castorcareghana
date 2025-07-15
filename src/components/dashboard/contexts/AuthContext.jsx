@@ -23,7 +23,7 @@ const rolePermissions = [
   {
     role: 'farmer',
     actions: [
-      'createUser', 'updateUser', 'getUser', 'getUsers',
+      'createUser', 'updateUser', 'getUser', 'getUsers', 'getMyProducts',
       'createProduct', 'updateProduct', 'getProduct', 'getProducts', 'deleteProduct',
       'createEducation', 'updateEducation', 'deleteEducation', 'getEducation', 'getEducations',
       'createReview', 'updateReview', 'deleteReview', 'getReview', 'getReviews'
@@ -32,9 +32,9 @@ const rolePermissions = [
   {
     role: 'admin',
     actions: [
-      'createProduct', 'updateProduct', 'deleteProduct', 'getProduct', 'getProducts',
+      'createProduct', 'updateProduct', 'deleteProduct', 'getProduct', 'getProducts', 'getAllFarmerProducts',
       'createEducation', 'updateEducation', 'deleteEducation', 'getEducation', 'getEducations',
-      'createUser', 'updateUser', 'deleteUser', 'getUser', 'getUsers',
+      'createUser', 'updateUser', 'deleteUser', 'getUser', 'getUsers', 'getMyProducts',
       'createReview', 'updateReview', 'deleteReview', 'getReview', 'getReviews'
     ]
   }

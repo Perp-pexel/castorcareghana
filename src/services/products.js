@@ -17,6 +17,10 @@ export const apiGetAllProducts = async () => {
   return apiClient.get('/products');
 };
 
+export const apiGetUserProducts = async () => {
+  return await apiClient.get("/users/me/products");
+};
+
 export const apiUpdateProduct = async (id, payload) => {
   return apiClient.patch(`/products/${id}`, payload);
 };
