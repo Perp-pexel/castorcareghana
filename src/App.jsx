@@ -84,6 +84,7 @@ const router = createBrowserRouter([
       { path: 'admin/products', element: <ProductManagement /> },
       { path: 'admin/education', element: <EducationManagement /> },
       { path: 'admin/reviews', element: <ReviewManagement /> },
+      { path: 'admin/farmerproducts', element: <AdminFarmerProductsManagement /> },
 
       // SUPER ADMIN ROUTES
       { path: 'superadmin', element: <SuperAdminDashboard /> },

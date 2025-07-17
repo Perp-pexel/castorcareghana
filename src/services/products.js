@@ -25,8 +25,13 @@ export const apiGetUserProducts = async () => {
 };
 
 export const apiUpdateProduct = async (id, payload) => {
-  return apiClient.patch(`/products/${id}`, payload);
+  return apiClient.patch(`/products/${id}`, payload, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
 };
+
 export const apiGetFarmerProducts = async (farmerId) =>
   apiClient.get(`/products/${farmerId}`);
 export const apiPayForProducts = async ({ product, amount, currency, quantity }) => {
@@ -47,7 +52,12 @@ export const apiGetUserReviews = async (buyerId) => apiClient.get(`/reviews/${bu
 //educations
 export const apiGetEducations = async () => apiClient.get("/educations")
 export const apiUpdateEducations = async (id, payload) =>
-  apiClient.patch(`/educations/${id}`, payload);
+  apiClient.patch(`/educations/${id}`, payload, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
+  
 
 export const apiDeleteEducations = async (id) =>
   apiClient.delete(`/educations/${id}`);

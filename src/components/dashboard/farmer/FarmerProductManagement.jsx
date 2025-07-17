@@ -11,9 +11,8 @@ import { useAuth } from '../contexts/AuthContext';
 
 const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUD_NAME;
 const CLOUDINARY_BASE_URL = import.meta.env.VITE_CLOUDINARY_URL;
-const CLOUDINARY_UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 
-const UNIT_OPTIONS = ['kg', 'g', 'liter', 'ml', 'pck', 'each', 'pcs', 'pound', 'box'];
+const unitOptions = ['kg', 'g', 'liter', 'ml', 'pck', 'each', 'pcs', 'pound', 'box'];
 
 const ProductManagement = () => {
   const { hasPermission } = useAuth();
@@ -22,9 +21,9 @@ const ProductManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [formValues, setFormValues] = useState({
     title: '',
-    description: '',
     price: '',
     unit: '',
     stock: '',
@@ -49,7 +48,6 @@ const ProductManagement = () => {
     setEditingProduct(product);
     setFormValues({
       title: product.title || '',
-      description: product.description || '',
       price: product.price || '',
       unit: product.unit || '',
       stock: product.stock || '',
@@ -85,43 +83,37 @@ const ProductManagement = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setFormValues({ ...formValues, imageFile: file });
+      setFormValues({ ...formValues, imageFile: file, image: file.name });
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    let imageUrl = formValues.image;
+
+    if (!formValues.title || !formValues.price || !formValues.unit || !formValues.stock) {
+      Swal.fire('Error', 'Please fill in all fields.', 'error');
+      return;
+    }
+
+    const data = new FormData();
+    data.append('title', formValues.title);
+    data.append('price', Number(formValues.price));
+    data.append('unit', formValues.unit);
+    data.append('stock', Number(formValues.stock));
 
     if (formValues.imageFile) {
-      const data = new FormData();
-      data.append('file', formValues.imageFile);
-      data.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
-
-      try {
-        const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, {
-          method: 'POST',
-          body: data
-        });
-        const file = await res.json();
-        imageUrl = file.secure_url;
-      } catch (err) {
-        console.error('Upload error:', err);
-      }
+      data.append('image', formValues.imageFile);
+    } else if (editingProduct && formValues.image) {
+      data.append('image', formValues.image);
     }
 
     try {
-      if (editingProduct) {
-        await apiUpdateProduct(editingProduct._id, {
-          ...formValues,
-          image: imageUrl
-        });
+      setLoading(true);
+      if (editingProduct?.id) {
+        await apiUpdateProduct(editingProduct.id, data);
         Swal.fire('Success', 'Product updated!', 'success');
       } else {
-        await apiPostProducts({
-          ...formValues,
-          image: imageUrl
-        });
+        await apiPostProducts(data);
         Swal.fire('Success', 'Product added!', 'success');
       }
 
@@ -129,14 +121,15 @@ const ProductManagement = () => {
       setShowModal(false);
       setEditingProduct(null);
     } catch (err) {
-      console.error('Submit failed:', err);
+      console.error('Submit failed:', err?.response?.data || err.message);
       Swal.fire('Error', 'Failed to submit product.', 'error');
+    } finally {
+      setLoading(false);
     }
   };
 
   const filteredProducts = products.filter((product) =>
-    product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.description?.toLowerCase().includes(searchTerm.toLowerCase())
+    product.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleViewProduct = (product) => {
@@ -146,7 +139,6 @@ const ProductManagement = () => {
         <img src="${product.image?.startsWith('http') ? product.image : `${CLOUDINARY_BASE_URL}${product.image}`}" 
              alt="${product.title}" 
              class="w-60 h-60 mx-auto object-cover rounded-md mb-2"/>
-        <p><strong>Description:</strong> ${product.description}</p>
         <p><strong>Price:</strong> GHS ${product.price} / ${product.unit}</p>
         <p><strong>Stock:</strong> ${product.stock}</p>
       `,
@@ -178,7 +170,7 @@ const ProductManagement = () => {
           <button
             onClick={() => {
               setFormValues({
-                title: '', description: '', price: '', unit: '', stock: '', image: '', imageFile: null
+                title: '', price: '', unit: '', stock: '', image: '', imageFile: null
               });
               setEditingProduct(null);
               setShowModal(true);
@@ -189,10 +181,10 @@ const ProductManagement = () => {
           </button>
         </div>
 
-        <div className="p-6 grid grid-cols-1 sm:grid-cols-2 gap-30 m-30 mt-10">
+        <div className="p-6 grid grid-cols-1 sm:grid-cols-2 gap-30 m-20 mt-10">
           {filteredProducts.map((product) => (
             <div
-              key={product._id}
+              key={product.id}
               className="bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow cursor-pointer"
               onClick={() => handleViewProduct(product)}
             >
@@ -204,11 +196,10 @@ const ProductManagement = () => {
                       : `${CLOUDINARY_BASE_URL}${product.image}`
                   }
                   alt={product.title}
-                  className="w-full h-60 object-cover rounded-md mb-4"
+                  className="w-full h-60 object-cover rounded-md  mb-4"
                 />
               )}
               <h3 className="text-lg font-semibold text-gray-900 mb-1">{product.title}</h3>
-              <p className="text-gray-600 mb-2 line-clamp-2">{product.description}</p>
               <p className="text-green-600 font-medium">GHS {product.price} / {product.unit}</p>
 
               <div className="mt-3 flex items-center">
@@ -238,7 +229,7 @@ const ProductManagement = () => {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleDelete(product._id);
+                      handleDelete(product.id);
                     }}
                     className="px-3 py-1 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                   >
@@ -265,34 +256,23 @@ const ProductManagement = () => {
                 onChange={(e) => setFormValues({ ...formValues, title: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg"
               />
-              <textarea
-                placeholder="Description"
-                value={formValues.description}
-                onChange={(e) => setFormValues({ ...formValues, description: e.target.value })}
-                rows={3}
+              <input
+                type="number"
+                placeholder="Price"
+                value={formValues.price}
+                onChange={(e) => setFormValues({ ...formValues, price: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg"
               />
-              <div className="grid grid-cols-2 gap-3">
-                <input
-                  type="number"
-                  placeholder="Price"
-                  value={formValues.price}
-                  onChange={(e) => setFormValues({ ...formValues, price: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                />
-                <select
-                  value={formValues.unit}
-                  onChange={(e) => setFormValues({ ...formValues, unit: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                >
-                  <option value="">Select Unit</option>
-                  {UNIT_OPTIONS.map((unit) => (
-                    <option key={unit} value={unit}>
-                      {unit}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <select
+                value={formValues.unit}
+                onChange={(e) => setFormValues({ ...formValues, unit: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              >
+                <option value="">Select unit</option>
+                {unitOptions.map((unit) => (
+                  <option key={unit} value={unit}>{unit}</option>
+                ))}
+              </select>
               <input
                 type="number"
                 placeholder="Stock"
@@ -300,19 +280,17 @@ const ProductManagement = () => {
                 onChange={(e) => setFormValues({ ...formValues, stock: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg"
               />
-              <input
-                type="text"
-                placeholder="Image URL (optional)"
-                value={formValues.image}
-                onChange={(e) => setFormValues({ ...formValues, image: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-              />
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-              />
+              <label className="block">
+                <span className="text-sm text-gray-500">
+                  {formValues.imageFile?.name || formValues.image || 'Upload image'}
+                </span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                />
+              </label>
               <div className="flex justify-end gap-2 mt-2">
                 <button
                   type="button"
@@ -325,7 +303,7 @@ const ProductManagement = () => {
                   Cancel
                 </button>
                 <button type="submit" className="px-4 py-2 bg-green-600 text-white rounded-lg">
-                  {editingProduct ? 'Update Product' : 'Add Product'}
+                  {loading ? (editingProduct ? 'Updating...' : 'Posting...') : (editingProduct ? 'Update Product' : 'Add Product')}
                 </button>
               </div>
             </form>

@@ -23,6 +23,7 @@ console.log("Sidebar ROLE:", role);
       { id: 'dashboard', label: 'Dashboard', icon: Home },
       { id: 'users', label: 'Users', icon: Users, permission: 'getUsers' },
       { id: 'products', label: 'Products', icon: Package, permission: 'getProducts' },
+      { id: 'farmerproducts', label: 'Farmer Products', icon: Package, permission: 'getProducts' },
       { id: 'education', label: 'Education', icon: BookOpen, permission: 'getEducations' },
       { id: 'reviews', label: 'Reviews', icon: Star, permission: 'getReviews' },
     ],

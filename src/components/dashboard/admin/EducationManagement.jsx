@@ -4,12 +4,10 @@ import Swal from 'sweetalert2';
 import {
   apiGetEducations,
   apiUpdateEducations,
-  apiDeleteEducations
+  apiDeleteEducations,
+  apiCreateEducations
 } from '../../../services/products';
 import { useAuth } from '../contexts/AuthContext';
-
-const CLOUDINARY_UPLOAD_URL = import.meta.env.VITE_CLOUDINARY_UPLOAD_URL;
-const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 
 const EducationManagement = () => {
   const { hasPermission } = useAuth();
@@ -20,14 +18,15 @@ const EducationManagement = () => {
   const [showMediaViewer, setShowMediaViewer] = useState(false);
   const [currentPost, setCurrentPost] = useState(null);
   const [editingEducation, setEditingEducation] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [education, setEducation] = useState(null);
   const [formValues, setFormValues] = useState({
     title: '',
     description: '',
     url: '',
     fee: '',
     media: [],
-    mediaFiles: [],
-    mediaUrls: ['']
+    mediaFiles: []
   });
 
   useEffect(() => {
@@ -49,11 +48,10 @@ const EducationManagement = () => {
       setFormValues({
         title: post.title,
         description: post.description,
-        url: post.url,
+        url: post.url || '',
         fee: post.fee || '',
         media: post.media || [],
-        mediaFiles: [],
-        mediaUrls: ['']
+        mediaFiles: []
       });
     } else {
       setEditingEducation(null);
@@ -63,25 +61,10 @@ const EducationManagement = () => {
         url: '',
         fee: '',
         media: [],
-        mediaFiles: [],
-        mediaUrls: ['']
+        mediaFiles: []
       });
     }
     setShowForm(true);
-  };
-
-  const uploadFile = async (file) => {
-    const data = new FormData();
-    data.append('file', file);
-    data.append('upload_preset', UPLOAD_PRESET);
-    try {
-      const res = await fetch(CLOUDINARY_UPLOAD_URL, { method: 'POST', body: data });
-      const json = await res.json();
-      return json.secure_url;
-    } catch {
-      Swal.fire('Upload failed', '', 'error');
-      return '';
-    }
   };
 
   const handleDelete = async (id) => {
@@ -106,55 +89,51 @@ const EducationManagement = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    let updatedMedia = [...formValues.media];
+    setLoading(true);
 
-    for (const file of formValues.mediaFiles) {
-      const url = await uploadFile(file);
-      if (url) {
-        updatedMedia.push({
-          type: file.type.startsWith('image') ? 'image'
-            : file.type.startsWith('video') ? 'video'
-            : file.type.startsWith('audio') ? 'audio'
-            : 'document',
-          filename: file.name,
-          fileUrl: url
-        });
-      }
+    const formData = new FormData();
+    formData.append('title', formValues.title);
+    formData.append('description', formValues.description);
+    formData.append('url', formValues.url || '');
+    formData.append('fee', formValues.fee || '');
+
+    // Only include existing media if editing
+    if (editingEducation?.id && formValues.media.length > 0) {
+      formData.append('existingMedia', JSON.stringify(formValues.media));
     }
 
-    for (const link of formValues.mediaUrls) {
-      if (link.trim()) {
-        const type = link.endsWith('.mp4') ? 'video'
-          : link.endsWith('.mp3') ? 'audio'
-          : link.includes('.pdf') ? 'document'
-          : 'image';
-        updatedMedia.push({
-          type,
-          filename: link.split('/').pop(),
-          fileUrl: link
-        });
-      }
-    }
-
-    const payload = {
-      title: formValues.title,
-      description: formValues.description,
-      url: formValues.url,
-      fee: formValues.fee,
-      media: updatedMedia
-    };
+    [...formValues.mediaFiles].forEach(file => {
+      formData.append('media', file);
+    });
 
     try {
-      await apiUpdateEducations(editingEducation._id, payload);
+      if (editingEducation?.id) {
+        await apiUpdateEducations(editingEducation.id, formData);
+        Swal.fire('Updated successfully', '', 'success');
+      } else {
+        await apiCreateEducations(formData);
+        Swal.fire('Created successfully', '', 'success');
+      }
       fetchEducations();
       setShowForm(false);
-      Swal.fire('Saved successfully', '', 'success');
-    } catch {
-      Swal.fire('Error saving post', '', 'error');
+    } catch (error) {
+      console.error('Submit failed:', error);
+      const message = error?.response?.data?.message || 'Form submission error';
+      Swal.fire('Error saving post', message, 'error');
+    } finally {
+      setLoading(false);
     }
   };
 
-  const getFirstImage = (media = []) => media.find(m => m.type === 'image')?.fileUrl;
+  const getFirstImage = (media = []) =>
+    media.find(m => m.fileUrl?.match(/\.(jpeg|jpg|png|gif|webp)$/))?.fileUrl;
+
+  const handleRemoveSavedMedia = (index) => {
+    setFormValues(prev => ({
+      ...prev,
+      media: prev.media.filter((_, i) => i !== index)
+    }));
+  };
 
   return (
     <div className="p-6 space-y-6">
@@ -184,7 +163,7 @@ const EducationManagement = () => {
           .filter(post => post.title.toLowerCase().includes(searchTerm.toLowerCase()))
           .map(post => (
             <div
-              key={post._id}
+              key={post.id}
               onClick={() => {
                 setCurrentPost(post);
                 setShowMediaViewer(true);
@@ -200,171 +179,235 @@ const EducationManagement = () => {
               )}
               <h3 className="font-semibold">{post.title}</h3>
               <p className="text-sm text-gray-600 line-clamp-2">{post.description}</p>
-              <p className="text-green-600 mt-1">{post.fee ? `GHS ${post.fee}` : 'Free'}</p>
+              <p className="text-green-600 mt-1">
+                {post.fee && parseFloat(post.fee) > 0 ? `GHS ${post.fee}` : 'Free'}
+              </p>
+              {post.owner && (
+                <p className="text-xs text-gray-400 mt-1">
+                  By {post.owner.firstName} {post.owner.lastName}
+                </p>
+              )}
               <div className="flex gap-3 mt-3">
-                <Eye className="text-green-600" />
-                <Edit className="text-blue-600" onClick={(e) => { e.stopPropagation(); openForm(post); }} />
-                <Trash2 className="text-red-600" onClick={(e) => { e.stopPropagation(); handleDelete(post._id); }} />
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setCurrentPost(post);
+                    setShowMediaViewer(true);
+                  }}
+                >
+                  <Eye className="text-green-600" />
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    openForm(post);
+                  }}
+                >
+                  <Edit className="text-blue-600" />
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDelete(post.id);
+                  }}
+                >
+                  <Trash2 className="text-red-600" />
+                </button>
               </div>
             </div>
           ))}
       </div>
 
-      {/* Form Modal */}
-      {showForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg max-w-lg w-full p-6 overflow-y-auto max-h-[90vh]">
-            <h2 className="text-xl font-bold mb-4">{editingEducation ? 'Edit Post' : 'Add Post'}</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <input type="text" placeholder="Title" value={formValues.title}
-                onChange={e => setFormValues({ ...formValues, title: e.target.value })}
-                className="w-full px-3 py-2 border rounded-lg" required />
+     {showForm && (
+  <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-50 overflow-auto">
+    <div className="bg-white rounded-lg w-full max-w-lg relative max-h-[90vh] overflow-hidden">
+      {/* Scrollable content */}
+      <div className="overflow-y-auto max-h-[90vh] p-6 pb-20">
+        <h2 className="text-xl font-semibold mb-4">
+          {editingEducation ? 'Edit Education' : 'Add Education'}
+        </h2>
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <input
+            type="text"
+            placeholder="Title"
+            value={formValues.title}
+            onChange={e => setFormValues({ ...formValues, title: e.target.value })}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+            required
+          />
+          <textarea
+            placeholder="Description"
+            value={formValues.description}
+            onChange={e => setFormValues({ ...formValues, description: e.target.value })}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+            required
+          ></textarea>
+          <input
+            type="url"
+            placeholder="Course URL (optional)"
+            value={formValues.url}
+            onChange={e => setFormValues({ ...formValues, url: e.target.value })}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+          />
+          <input
+            placeholder="Fee"
+            value={formValues.fee}
+            onChange={e => setFormValues({ ...formValues, fee: e.target.value })}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+          />
+          <input
+            type="file"
+            multiple
+            onChange={e =>
+              setFormValues(prev => ({
+                ...prev,
+                mediaFiles: [...prev.mediaFiles, ...Array.from(e.target.files)]
+              }))
+            }
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+          />
 
-              <textarea rows={3} placeholder="Description" value={formValues.description}
-                onChange={e => setFormValues({ ...formValues, description: e.target.value })}
-                className="w-full px-3 py-2 border rounded-lg" required />
-
-              <input type="text" placeholder="Fee (optional)" value={formValues.fee}
-                onChange={e => setFormValues({ ...formValues, fee: e.target.value })}
-                className="w-full px-3 py-2 border rounded-lg" />
-
-              <input type="text" placeholder="Resource URL" value={formValues.url}
-                onChange={e => setFormValues({ ...formValues, url: e.target.value })}
-                className="w-full px-3 py-2 border rounded-lg" />
-
-              {/* Upload files */}
-              
-             <label className="block text-sm font-medium text-gray-700 mb-1">
-  Media Uploads <span className="text-xs text-gray-500">(You can add multiple files)</span>
-</label>
-
-<div className="flex items-center gap-2 mb-2">
-  <button
-    type="button"
-    onClick={() => document.getElementById('media-file-input').click()}
-    className="px-4 py-2 text-sm bg-gray-100 border rounded hover:bg-gray-200"
-  >
-    + Add Files
-  </button>
-  <input
-    id="media-file-input"
-    type="file"
-    multiple
-    accept="image/*,video/*,audio/*,application/*,text/*"
-    onChange={(e) => {
-      const newFiles = Array.from(e.target.files);
-      setFormValues(prev => ({
-        ...prev,
-        mediaFiles: [...prev.mediaFiles, ...newFiles]
-      }));
-    }}
-    className="hidden"
-  />
-</div>
-
-{/* File list with remove buttons */}
-{formValues.mediaFiles.length > 0 && (
-  <ul className="mt-2 space-y-2 text-sm text-gray-600">
-    {formValues.mediaFiles.map((file, index) => (
-      <li
-        key={index}
-        className="flex items-center justify-between px-3 py-1 rounded"
-      >
-        <span className="truncate max-w-[70%]">{file.name}</span>
-        <button
-          type="button"
-          onClick={() => {
-            const updated = [...formValues.mediaFiles];
-            updated.splice(index, 1);
-            setFormValues(prev => ({ ...prev, mediaFiles: updated }));
-          }}
-          className="text-red-600 text-xs hover:underline"
-        >
-          Remove
-        </button>
-      </li>
-    ))}
-  </ul>
-)}
-
-              {/* Show existing media */}
-              {formValues.media.map((mediaItem, index) => (
-                <div key={index} className="flex justify-between items-center bg-gray-100 p-2 rounded mt-1">
-                  <span className="text-sm truncate">{mediaItem.filename}</span>
-                  <button type="button" className="text-red-600 text-sm"
-                    onClick={() => {
-                      const newMedia = [...formValues.media];
-                      newMedia.splice(index, 1);
-                      setFormValues({ ...formValues, media: newMedia });
-                    }}>
-                    Remove
-                  </button>
+          {(formValues.media.length > 0 || formValues.mediaFiles.length > 0) && (
+            <div className="space-y-3 text-sm text-gray-700 mt-2">
+              {formValues.media.length > 0 && (
+                <div>
+                  <h4 className="font-medium">Saved Media:</h4>
+                  {formValues.media.map((m, index) => (
+                    <div key={index} className="flex justify-between items-center gap-2 border p-2 rounded">
+                      <div className="flex items-center gap-2">
+                        {m.fileUrl?.match(/\.(jpeg|jpg|png|gif|webp)$/) && (
+                          <img src={m.fileUrl} alt="media" className="w-12 h-12 object-cover rounded" />
+                        )}
+                        {m.fileUrl?.match(/\.(mp4|webm)$/) && (
+                          <video src={m.fileUrl} className="w-12 h-12 rounded" />
+                        )}
+                        {m.fileUrl?.match(/\.(mp3|wav)$/) && (
+                          <audio src={m.fileUrl} controls className="w-40" />
+                        )}
+                        {m.fileUrl?.match(/\.(pdf|doc|docx)$/) && (
+                          <a
+                            href={m.fileUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 underline text-xs"
+                          >
+                            {m.filename || 'View Document'}
+                          </a>
+                        )}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveSavedMedia(index)}
+                        className="text-red-600 hover:underline text-xs"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))}
                 </div>
-              ))}
-
-              {/* Media URL input */}
-              {formValues.mediaUrls.map((url, index) => (
-                <div key={index} className="flex items-center gap-2 mt-2">
-                  <input type="text" placeholder="Add media URL" value={url}
-                    onChange={e => {
-                      const urls = [...formValues.mediaUrls];
-                      urls[index] = e.target.value;
-                      setFormValues({ ...formValues, mediaUrls: urls });
-                    }}
-                    className="flex-1 px-3 py-2 border rounded-lg" />
-                  <button type="button" className="text-red-600 text-xs hover:underline"
-                    onClick={() => {
-                      const urls = [...formValues.mediaUrls];
-                      urls.splice(index, 1);
-                      setFormValues({ ...formValues, mediaUrls: urls });
-                    }}>
-                    Remove
-                  </button>
+              )}
+              {formValues.mediaFiles.length > 0 && (
+                <div>
+                  <h4 className="font-medium">New Files:</h4>
+                  {formValues.mediaFiles.map((file, index) => (
+                    <div key={index} className="flex justify-between items-center">
+                      <span>{file.name}</span>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setFormValues(prev => ({
+                            ...prev,
+                            mediaFiles: prev.mediaFiles.filter((_, i) => i !== index)
+                          }))
+                        }
+                        className="text-red-600 hover:underline text-xs"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              )}
+            </div>
+          )}
 
-              <button type="button" className="text-sm text-blue-600"
-                onClick={() => setFormValues({ ...formValues, mediaUrls: [...formValues.mediaUrls, ''] })}>
-                + Add another media URL
-              </button>
+          <div className="flex justify-end pt-2">
+            <button
+              type="submit"
+              disabled={loading}
+              className="px-4 py-2 bg-green-600 text-white rounded-lg"
+            >
+              {loading ? 'Saving...' : editingEducation ? 'Update' : 'Create'}
+            </button>
+          </div>
+        </form>
+      </div>
 
-              <div className="flex justify-end gap-3">
-                <button type="button" className="px-4 py-2 text-gray-600" onClick={() => setShowForm(false)}>
-                  Cancel
-                </button>
-                <button type="submit" className="px-4 py-2 bg-green-600 text-white rounded-lg">
-                  Save Post
-                </button>
-              </div>
-            </form>
+      {/* Fixed close button */}
+            <button
+              onClick={() => setShowForm(false)}
+              className="absolute right-4 top-4 text-gray-600 hover:text-black"
+            >
+              <X />
+            </button>
           </div>
         </div>
       )}
 
-      {/* Modal Viewer */}
+
       {showMediaViewer && currentPost && (
-        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-3xl w-full p-6 overflow-y-auto max-h-[90vh] relative">
-            <button onClick={() => setShowMediaViewer(false)} className="absolute top-4 right-4 text-gray-600 hover:text-red-600">
-              <X size={20} />
+        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center">
+          <div className="bg-white rounded-lg p-4 w-full max-w-2xl overflow-y-auto max-h-[90vh] relative">
+            <button
+              className="absolute right-4 top-4 text-gray-600 hover:text-black"
+              onClick={() => setShowMediaViewer(false)}
+            >
+              <X />
             </button>
-            <h2 className="text-lg font-semibold mb-2">{currentPost.title}</h2>
-            <p className="text-gray-700 mb-2">{currentPost.description}</p>
-            <p className="text-green-600 mb-2">{currentPost.fee ? `GHS ${currentPost.fee}` : 'Free'}</p>
-            {currentPost.url && (
-              <a href={currentPost.url} className="text-blue-600 underline block mb-4" target="_blank">
-                Visit Resource
-              </a>
+            <h2 className="text-2xl font-bold mb-3">{currentPost.title}</h2>
+            <p className="mb-2 text-gray-700">{currentPost.description}</p>
+            <p className="text-green-600 font-semibold">
+              {currentPost.fee && parseFloat(currentPost.fee) > 0 ? `GHS ${currentPost.fee}` : 'Free'}
+            </p>
+            {currentPost?.url?.trim() && (
+  <a
+    href={currentPost.url}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 mt-3 inline-block"
+  >
+    Visit Site
+  </a>
+)}
+
+            {currentPost.owner && (
+              <p className="text-sm text-gray-500 mb-2">
+                Posted by {currentPost.owner.firstName} {currentPost.owner.lastName}
+              </p>
             )}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {currentPost.media.map((m, i) => (
-                <div key={i}>
-                  {m.type === 'image' && <img src={m.fileUrl} alt={m.filename} className="rounded" />}
-                  {m.type === 'video' && <video src={m.fileUrl} controls className="rounded w-full" />}
-                  {m.type === 'audio' && <audio src={m.fileUrl} controls className="w-full" />}
-                  {m.type === 'document' && (
-                    <a href={m.fileUrl} target="_blank" rel="noopener noreferrer" className="underline text-blue-600">
-                      {m.filename}
+            <div className="grid grid-cols-1 gap-4 mt-4">
+              {currentPost.media?.map((m, index) => (
+                <div key={index}>
+                  {m.fileUrl?.match(/\.(jpeg|jpg|png|gif|webp)$/) && (
+                    <img src={m.fileUrl} alt="media" className="w-full rounded" />
+                  )}
+                  {m.fileUrl?.match(/\.(mp4|webm)$/) && (
+                    <video controls src={m.fileUrl} className="w-full rounded" />
+                  )}
+                  {m.fileUrl?.match(/\.(mp3|wav)$/) && (
+                    <audio controls src={m.fileUrl} className="w-full" />
+                  )}
+                  {m.fileUrl?.match(/\.(pdf|doc|docx)$/) && (
+                    <a
+                      href={m.fileUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 underline"
+                    >
+                      View Document
                     </a>
                   )}
                 </div>

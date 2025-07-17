@@ -58,7 +58,7 @@ const SignIn = () => {
 
       // Redirect based on role
       const role = user.role?.toLowerCase();
-      if (role === 'superadmin' || role === 'super-admin') navigate('/dashboard/super-admin');
+      if (role === 'superadmin' || role === 'superadmin') navigate('/dashboard/super-admin');
       else if (role === 'admin') navigate('/dashboard/admin');
       else if (role === 'farmer') navigate('/dashboard/farmer');
       else navigate('/dashboard/buyer');
